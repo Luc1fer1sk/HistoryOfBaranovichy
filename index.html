@@ -31,9 +31,9 @@
     .profile-icon {
       position: absolute;
       top: 1rem;
-      left: 1rem;
-      width: 40px;
-      height: 40px;
+      right: 1rem;
+      width: 60px;
+      height: 60px;
       background-color: white;
       border-radius: 50%;
       display: flex;
@@ -42,20 +42,23 @@
       color: #0b3d91;
       font-weight: bold;
       text-decoration: none;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.25);
       transition: transform 0.2s;
       overflow: hidden;
+      border: 2px solid white;
     }
 
     .profile-icon img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       border-radius: 50%;
+      padding: 2px;
     }
 
     .profile-icon:hover {
-      transform: scale(1.1);
+      transform: scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     header img {
@@ -118,10 +121,10 @@
     @media (max-width: 600px) {
       .profile-icon {
         top: 0.8rem;
-        left: 0.8rem;
-        width: 36px;
-        height: 36px;
-        font-size: 0.9rem;
+        right: 0.8rem;
+        width: 50px;
+        height: 50px;
+        font-size: 1.2rem;
       }
 
       .menu-item a {
@@ -202,8 +205,9 @@
         img.alt = 'Аватар';
         img.style.width = '100%';
         img.style.height = '100%';
-        img.style.objectFit = 'cover';
+        img.style.objectFit = 'contain';
         img.style.borderRadius = '50%';
+        img.style.padding = '2px';
         img.onerror = () => {
           profileLink.innerHTML = '👤';
         };
