@@ -188,9 +188,8 @@
 </footer>
 
 <script>
-  // === Настройте здесь ваши данные Supabase ===
-  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co'; // ← ЗАМЕНИТЕ!
-  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';        // ← ЗАМЕНИТЕ!
+  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
 
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
@@ -205,24 +204,37 @@
     const email = document.getElementById('email').value.trim();
     const password = document.getElementById('password').value;
 
-    // Очистка предыдущих сообщений
     errorMessage.style.display = 'none';
     successMessage.style.display = 'none';
     submitBtn.disabled = true;
 
     try {
+      // Шаг 1: Регистрация пользователя
       const { data, error } = await supabase.auth.signUp({
         email: email,
-        password: password,
-        options: {
-          // По умолчанию Supabase отправляет email подтверждения
-          // Если хотите вход без подтверждения — настройте в Supabase Auth Settings
-        }
+        password: password
       });
 
       if (error) throw error;
 
-      // Успешная регистрация
+      if (!data.user) {
+        throw new Error('Не удалось создать пользователя.');
+      }
+
+      // Шаг 2: Создаём пустую запись в profiles
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+          id: data.user.id,
+          avatar: 'dog.png' // значение по умолчанию
+        });
+
+      if (profileError) {
+        console.warn('Профиль не создан:', profileError.message);
+        // Можно не прерывать — пользователь всё равно зарегистрирован
+      }
+
+      // Успешно
       successMessage.style.display = 'block';
       setTimeout(() => {
         window.location.href = 'profile.html';
