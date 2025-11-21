@@ -17,68 +17,89 @@
     min-height: 100vh;
   }
 
+  /* Основной контейнер для header — без фона */
   header {
-    background: rgba(11, 61, 145, 0.95); /* Полупрозрачный синий */
-    color: white;
+    position: relative;
     text-align: center;
     padding: 2rem 1rem;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1;
     overflow: hidden;
   }
 
-  /* Диагональная линия справа (через псевдоэлемент) */
-  header::after {
-    content: '';
+  /* Синяя область — накладывается поверх всего */
+  .blue-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(11, 61, 145, 0.95);
+    z-index: 2;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    text-align: center;
+  }
+
+  /* Белая область — флаг, которая видна ПОД синей шапкой */
+  .white-flag-area {
     position: absolute;
     top: 0;
     right: 0;
     width: 40%;
     height: 100%;
-    background: linear-gradient(135deg, transparent 49%, white 50%);
+    background: url('img/belarus-flag.png') no-repeat center / cover; /* Флаг Беларуси */
     z-index: 1;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    border-left: 2px solid rgba(255,255,255,0.3); /* Легкая граница для разделения */
   }
 
-  /* Флаг Беларуси справа */
-  header::before {
+  /* Диагональное "перекрытие" синей области над белой */
+  .blue-header::after {
     content: '';
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 60px;
-    height: 40px;
-    background: url('img/Flag_of_Belarus.svg.png') no-repeat center / contain; /* Убедись, что файл существует */
-    z-index: 2;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, transparent 49%, rgba(11, 61, 145, 0.95) 50%);
+    z-index: 3;
   }
 
-  header img {
+  /* Элементы внутри синей области */
+  .blue-header img {
     height: 80px;
     margin-bottom: 1rem;
     border-radius: 8px;
     box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    z-index: 3;
+    z-index: 4;
     position: relative;
   }
 
-  h1 {
+  .blue-header h1 {
     margin: 0;
     font-size: 2rem;
-    z-index: 3;
+    z-index: 4;
     position: relative;
+    color: white;
   }
 
-  p {
+  .blue-header p {
     margin: 0.5rem 0 0;
     font-size: 0.9rem;
     opacity: 0.9;
-    z-index: 3;
+    z-index: 4;
     position: relative;
+    color: rgba(255,255,255,0.8);
   }
 
   main {
     flex: 1;
+    padding-top: 2rem; /* Отступ от header */
   }
 
   .menu-container {
@@ -123,20 +144,20 @@
   }
 
   @media (max-width: 600px) {
-    .menu-item a {
-      font-size: 1.1rem;
+    .blue-header {
+      padding: 1.5rem 0.5rem;
     }
-    h1 {
+    .blue-header h1 {
       font-size: 1.6rem;
     }
-    header::after {
+    .white-flag-area {
       width: 60%;
     }
-    header::before {
-      width: 40px;
-      height: 30px;
-      top: 0.5rem;
-      right: 0.5rem;
+    .blue-header::after {
+      background: linear-gradient(135deg, transparent 45%, rgba(11, 61, 145, 0.95) 46%);
+    }
+    .blue-header img {
+      height: 60px;
     }
   }
 </style>
@@ -163,5 +184,6 @@
 
 </body>
 </html>
+
 
 
