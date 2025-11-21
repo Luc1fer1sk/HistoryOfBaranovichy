@@ -1,10 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-  <title>Мой сайт</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Городской исполнительный комитет</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 {
+      color: #0b3d91;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      margin-top: 3rem;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
 </head>
 <body>
-  <h1>Привет, мир!</h1>
-  <p>Это мой сайт на GitHub Pages.</p>
+
+<header>
+  <h1>Городской исполнительный комитет</h1>
+  <p>История и современность административного центра города</p>
+</header>
+
+<div class="container">
+
+  <h2>История</h2>
+  <p>
+    Городской исполнительный комитет (горисполком) был создан в [укажите год, например, 1930 году] как орган исполнительной власти,
+    отвечающий за управление городским хозяйством, социальной сферой и развитием инфраструктуры.
+    На протяжении десятилетий горисполком играл ключевую роль в жизни города — от восстановления после войны до строительства новых микрорайонов и школ.
+  </p>
+  <p>
+    В разные годы в его стенах принимались важнейшие решения, формирующие облик и будущее нашего города.
+  </p>
+
+  <h2>Здание горисполкома</h2>
+  <p><strong>Год постройки:</strong> [например, 1952 год]</p>
+  <p><strong>Архитектор:</strong> [укажите имя, если известно]</p>
+  <p><strong>Адрес:</strong> [полный адрес, например: г. Минск, ул. Ленина, д. 10]</p>
+  <p>
+    Здание построено в стиле [укажите стиль: советский неоклассицизм / сталинский ампир / модернизм и т.д.]
+    и с тех пор неоднократно реконструировалось, сохраняя при этом свой исторический облик.
+  </p>
+
+  <h2>Фотографии в разные годы</h2>
+  <div class="gallery">
+    <!-- Замените пути на реальные URL ваших фото -->
+    <img src="https://via.placeholder.com/400x300?text=1950s" alt="Горисполком в 1950-х">
+    <img src="https://via.placeholder.com/400x300?text=1970s" alt="Горисполком в 1970-х">
+    <img src="https://via.placeholder.com/400x300?text=1990s" alt="Горисполком в 1990-х">
+    <img src="https://via.placeholder.com/400x300?text=Сейчас" alt="Горисполком сегодня">
+  </div>
+
+  <p style="margin-top: 2rem; font-style: italic; color: #555;">
+    <em>Если у вас есть старые фотографии или архивные материалы — мы будем рады их разместить!</em>
+  </p>
+
+</div>
+
+<footer>
+  <p>© Городской исполнительный комитет, [год]. Все права защищены.</p>
+  <p>Сайт размещён на GitHub Pages</p>
+</footer>
+
 </body>
 </html>
