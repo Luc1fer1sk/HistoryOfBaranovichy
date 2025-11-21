@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Дополнительные данные — Мой дом - история</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 550px;
+    }
+
+    .avatar-preview {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-option {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .avatar-option.selected {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .avatar-option img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .save-btn {
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.9rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .save-btn:hover {
+      background-color: #0066cc;
+    }
+
+    .save-btn:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 1.5rem;
+      text-align: center;
+      color: #0b3d91;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 480px) {
+      .avatar-preview {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Дополнительные данные</h1>
+  <p>Расскажите о себе</p>
+</header>
+
+<main>
+  <div class="form-container">
+    <div id="errorMessage" class="error"></div>
+    <form id="profileForm">
+      <div class="avatar-preview">
+        <div class="avatar-option selected" data-avatar="dog.png">
+          <img src="img/dog.png" alt="Собака">
+          <div style="text-align:center; margin-top:0.3rem;">Собака</div>
+        </div>
+        <div class="avatar-option" data-avatar="cat.png">
+          <img src="img/cat.png" alt="Кошка">
+          <div style="text-align:center; margin-top:0.3rem;">Кошка</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="nickname">Никнейм *</label>
+        <input type="text" id="nickname" required maxlength="30">
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">Дата рождения</label>
+        <input type="date" id="birthDate">
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Пол</label>
+        <select id="gender">
+          <option value="">— Не указан —</option>
+          <option value="male">Мужской</option>
+          <option value="female">Женский</option>
+          <option value="other">Другой</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">О себе</label>
+        <textarea id="description" placeholder="Расскажите немного о себе..."></textarea>
+      </div>
+
+      <button type="submit" class="save-btn" id="submitBtn">Сохранить и перейти в профиль</button>
+    </form>
+
+    <a href="index.html" class="back-link">← Вернуться на главную</a>
+  </div>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<script>
+  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const errorMessage = document.getElementById('errorMessage');
+  const submitBtn = document.getElementById('submitBtn');
+
+  // Проверяем, что пользователь авторизован
+  async function checkAuth() {
+    const {  { user }, error } = await supabase.auth.getUser();
+    if (error || !user) {
+      window.location.href = 'vhod.html';
+    }
+    return user;
+  }
+
+  // Обработчик отправки
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const user = await checkAuth();
+    if (!user) return;
+
+    const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
+    const nickname = document.getElementById('nickname').value.trim();
+    const birthDate = document.getElementById('birthDate').value || null;
+    const gender = document.getElementById('gender').value || null;
+    const description = document.getElementById('description').value.trim() || null;
+
+    errorMessage.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Сохранение…';
+
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: user.id,
+          nickname,
+          birth_date: birthDate,
+          gender,
+          description,
+          avatar: selectedAvatar,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (error) throw error;
+
+      // Успешно → переходим в профиль
+      window.location.href = 'profile.html';
+
+    } catch (err) {
+      console.error('Ошибка:', err);
+      errorMessage.textContent = 'Не удалось сохранить данные. Попробуйте снова.';
+      errorMessage.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Сохранить и перейти в профиль';
+    }
+  }
+
+  // Инициализация
+  checkAuth();
+  document.getElementById('profileForm').addEventListener('submit', handleSubmit);
+
+  // Обработчик выбора аватара
+  document.querySelectorAll('.avatar-option').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+</script>
+
+</body>
+</html>
