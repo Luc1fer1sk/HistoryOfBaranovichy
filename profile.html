@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Профиль — Мой дом - история</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .profile-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .profile-info {
+      margin-bottom: 2rem;
+    }
+
+    .profile-info h2 {
+      color: #0b3d91;
+      margin-bottom: 0.5rem;
+    }
+
+    .profile-info p {
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    .logout-btn {
+      background-color: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.9rem 1.5rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .logout-btn:hover {
+      background-color: #b71c1c;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: #0b3d91;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    .loading {
+      color: #666;
+      font-style: italic;
+    }
+
+    @media (max-width: 480px) {
+      .profile-container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Личный профиль</h1>
+</header>
+
+<main>
+  <div class="profile-container">
+    <div id="profileContent" class="profile-info">
+      <p class="loading">Загрузка профиля…</p>
+    </div>
+    <button id="logoutBtn" class="logout-btn">Выйти</button>
+    <a href="index.html" class="back-link">← Вернуться на главную</a>
+  </div>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<script>
+  // === ВАШИ ДАННЫЕ SUPABASE ===
+  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const profileContent = document.getElementById('profileContent');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  // Проверяем, авторизован ли пользователь
+  async function loadProfile() {
+    const {  { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      // Если не авторизован — редирект на страницу входа
+      window.location.href = 'vhod.html';
+      return;
+    }
+
+    // Отображаем email
+    profileContent.innerHTML = `
+      <h2>Добро пожаловать!</h2>
+      <p>${user.email}</p>
+      <p style="font-size: 0.95rem; color: #888;">Вы вошли в систему</p>
+    `;
+  }
+
+  // Обработчик выхода
+  async function handleLogout() {
+    try {
+      await supabase.auth.signOut();
+      window.location.href = 'index.html'; // или 'vhod.html'
+    } catch (err) {
+      console.error('Ошибка при выходе:', err);
+      alert('Не удалось выйти. Попробуйте снова.');
+    }
+  }
+
+  // Инициализация
+  loadProfile().catch(console.error);
+  logoutBtn.addEventListener('click', handleLogout);
+</script>
+
+</body>
+</html>
