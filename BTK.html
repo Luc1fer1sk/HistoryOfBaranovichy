@@ -1,1 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Барановичский технологический колледж Белкоопсоюза</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
 
+    header {
+      background-color: #0b3d91;
+      color: white;
+      padding: 1.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    header img {
+      height: 70px;
+      width: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    header .text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 {
+      color: #0b3d91;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      margin-top: 0;
+      border-top: 1px solid #ddd;
+    }
+
+    /* Кнопка "Главная" */
+    .back-button {
+      background-color: #0a2e70;
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+      align-self: flex-start;
+    }
+
+    .back-button:hover {
+      background-color: #082355;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      header img {
+        height: 60px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .back-button {
+        align-self: center;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Герб Барановичей">
+  <div class="text">
+    <h1>Барановичский технологический колледж Белкоопсоюза</h1>
+    <p>Образование, традиции и будущее кооперативной отрасли</p>
+  </div>
+  <a href="index.html" class="back-button">Главная</a>
+</header>
+
+<div class="container">
+
+  <h2>История</h2>
+  <p>
+    Барановичский технологический колледж Белкоопсоюза — одно из ведущих средних специальных учебных заведений Брестской области. Колледж был основан в 1965 году как Барановичское кооперативное училище и с тех пор готовит квалифицированные кадры для потребительской кооперации и других отраслей экономики.
+  </p>
+  <p>
+    На протяжении десятилетий учебное заведение развивалось вместе с городом: обновлялась материально-техническая база, внедрялись новые специальности, расширялись международные связи. Сегодня колледж сочетает богатые традиции кооперативного образования с современными требованиями к подготовке специалистов.
+  </p>
+
+  <h2>Современность</h2>
+  <p><strong>Адрес:</strong> 225409, Республика Беларусь, Брестская область, г. Барановичи, ул. Кирова, д. 31.</p>
+  <p>
+    В колледже обучают по таким специальностям, как «Экономика и организация производства», «Торговое дело», «Поварское и кондитерское дело», «Информационные системы и технологии» и другим востребованным направлениям.
+  </p>
+  <p>
+    Студенты колледжа активно участвуют в олимпиадах, конкурсах профессионального мастерства, спортивных и культурных мероприятиях. Многие выпускники успешно продолжают обучение в вузах или трудоустраиваются в ведущие предприятия Беларуси и за рубежом.
+  </p>
+
+  <h2>Фотографии колледжа</h2>
+  <div class="gallery">
+    <img src="img/college_1970.jpg" alt="Колледж в 1970-х">
+    <img src="img/college_class.jpg" alt="Учебный класс">
+    <img src="img/college_today.jpg" alt="Колледж сегодня">
+  </div>
+
+  <p style="margin-top: 2rem; font-style: italic; color: #555;">
+    <em>Если у вас есть архивные фотографии или воспоминания, связанные с колледжем, — поделитесь с нами!</em>
+  </p>
+
+</div>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+</body>
+</html>
