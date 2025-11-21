@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Горисполком Барановичей — Главное меню</title>
+  <title>Мой дом - история</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
   <style>
     body {
@@ -12,6 +12,9 @@
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* Занимает минимум всю высоту экрана */
     }
 
     header {
@@ -31,6 +34,10 @@
     h1 {
       margin: 0;
       font-size: 2rem;
+    }
+
+    main {
+      flex: 1; /* Растягивается, чтобы footer прилипал к низу */
     }
 
     .menu-container {
@@ -71,7 +78,6 @@
       padding: 1.5rem;
       background-color: #eef2f7;
       color: #666;
-      margin-top: 3rem;
       border-top: 1px solid #ddd;
     }
 
@@ -90,15 +96,17 @@
 
 <header>
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
-  <h1>Барановичский горисполком</h1>
+  <h1>Мой дом - история</h1>
   <p>Выберите раздел для просмотра</p>
 </header>
 
-<div class="menu-container">
-  <div class="menu-item">
-    <a href="MainList.html">Список исторических достопримечательностей</a>
+<main>
+  <div class="menu-container">
+    <div class="menu-item">
+      <a href="MainList.html">Список исторических достопримечательностей</a>
+    </div>
   </div>
-</div>
+</main>
 
 <footer>
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
@@ -106,4 +114,3 @@
 
 </body>
 </html>
-
