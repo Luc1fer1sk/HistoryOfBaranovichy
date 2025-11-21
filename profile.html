@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Профиль — Мой дом - история</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
@@ -33,10 +32,9 @@
 
     main {
       flex: 1;
+      padding: 1.5rem;
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 1.5rem;
     }
 
     .profile-container {
@@ -45,22 +43,79 @@
       border-radius: 12px;
       box-shadow: 0 4px 16px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 500px;
-      text-align: center;
+      max-width: 550px;
     }
 
-    .profile-info {
-      margin-bottom: 2rem;
+    .avatar-preview {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    .profile-info h2 {
-      color: #0b3d91;
-      margin-bottom: 0.5rem;
+    .avatar-option {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
     }
 
-    .profile-info p {
+    .avatar-option.selected {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .avatar-option img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .save-btn {
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.9rem;
       font-size: 1.1rem;
-      color: #555;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1rem;
+    }
+
+    .save-btn:hover {
+      background-color: #0066cc;
+    }
+
+    .save-btn:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
     }
 
     .logout-btn {
@@ -68,11 +123,12 @@
       color: white;
       border: none;
       border-radius: 6px;
-      padding: 0.9rem 1.5rem;
-      font-size: 1.1rem;
+      padding: 0.8rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s;
+      width: 100%;
+      margin-top: 0.8rem;
     }
 
     .logout-btn:hover {
@@ -80,8 +136,9 @@
     }
 
     .back-link {
-      display: inline-block;
+      display: block;
       margin-top: 1.5rem;
+      text-align: center;
       color: #0b3d91;
       text-decoration: none;
       font-weight: 600;
@@ -89,6 +146,13 @@
 
     .back-link:hover {
       text-decoration: underline;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+      font-style: italic;
+      padding: 2rem;
     }
 
     footer {
@@ -99,18 +163,16 @@
       border-top: 1px solid #ddd;
     }
 
-    .loading {
-      color: #666;
-      font-style: italic;
-    }
-
     @media (max-width: 480px) {
-      .profile-container {
-        padding: 1.5rem;
+      .avatar-preview {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
       }
 
-      h1 {
-        font-size: 1.5rem;
+      .avatar-option img {
+        width: 70px;
+        height: 70px;
       }
     }
   </style>
@@ -123,11 +185,9 @@
 
 <main>
   <div class="profile-container">
-    <div id="profileContent" class="profile-info">
+    <div id="profileContent">
       <p class="loading">Загрузка профиля…</p>
     </div>
-    <button id="logoutBtn" class="logout-btn">Выйти</button>
-    <a href="index.html" class="back-link">← Вернуться на главную</a>
   </div>
 </main>
 
@@ -136,47 +196,141 @@
 </footer>
 
 <script>
-  // === ВАШИ ДАННЫЕ SUPABASE ===
   const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
-
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-  const profileContent = document.getElementById('profileContent');
-  const logoutBtn = document.getElementById('logoutBtn');
+  let currentUser = null;
 
-  // Проверяем, авторизован ли пользователь
+  // Загружаем профиль
   async function loadProfile() {
     const {  { user } } = await supabase.auth.getUser();
-
     if (!user) {
-      // Если не авторизован — редирект на страницу входа
       window.location.href = 'vhod.html';
       return;
     }
+    currentUser = user;
 
-    // Отображаем email
-    profileContent.innerHTML = `
-      <h2>Добро пожаловать!</h2>
-      <p>${user.email}</p>
-      <p style="font-size: 0.95rem; color: #888;">Вы вошли в систему</p>
-    `;
+    // Получаем данные из таблицы profiles
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    renderProfileForm(data || {});
   }
 
-  // Обработчик выхода
-  async function handleLogout() {
+  function renderProfileForm(profile = {}) {
+    const avatar = profile.avatar || 'dog.png';
+    const nickname = profile.nickname || '';
+    const birthDate = profile.birth_date ? profile.birth_date.split('T')[0] : '';
+    const gender = profile.gender || '';
+    const description = profile.description || '';
+
+    const html = `
+      <div class="avatar-preview">
+        <div class="avatar-option ${avatar === 'dog.png' ? 'selected' : ''}" data-avatar="dog.png">
+          <img src="img/dog.png" alt="Собака">
+          <div style="text-align:center; margin-top:0.3rem;">Собака</div>
+        </div>
+        <div class="avatar-option ${avatar === 'cat.png' ? 'selected' : ''}" data-avatar="cat.png">
+          <img src="img/cat.png" alt="Кошка">
+          <div style="text-align:center; margin-top:0.3rem;">Кошка</div>
+        </div>
+      </div>
+
+      <form id="profileForm">
+        <div class="form-group">
+          <label for="nickname">Никнейм</label>
+          <input type="text" id="nickname" value="${nickname}" maxlength="30">
+        </div>
+
+        <div class="form-group">
+          <label for="birthDate">Дата рождения</label>
+          <input type="date" id="birthDate" value="${birthDate}">
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Пол</label>
+          <select id="gender">
+            <option value="">— Не указан —</option>
+            <option value="male" ${gender === 'male' ? 'selected' : ''}>Мужской</option>
+            <option value="female" ${gender === 'female' ? 'selected' : ''}>Женский</option>
+            <option value="other" ${gender === 'other' ? 'selected' : ''}>Другой</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="description">О себе</label>
+          <textarea id="description" placeholder="Расскажите немного о себе...">${description}</textarea>
+        </div>
+
+        <button type="submit" class="save-btn" id="saveBtn">Сохранить профиль</button>
+      </form>
+
+      <button class="logout-btn" id="logoutBtn">Выйти</button>
+      <a href="index.html" class="back-link">← Вернуться на главную</a>
+    `;
+
+    document.getElementById('profileContent').innerHTML = html;
+
+    // Обработчики
+    document.querySelectorAll('.avatar-option').forEach(el => {
+      el.addEventListener('click', () => {
+        document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
+        el.classList.add('selected');
+      });
+    });
+
+    document.getElementById('profileForm').addEventListener('submit', saveProfile);
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+  }
+
+  async function saveProfile(e) {
+    e.preventDefault();
+    const saveBtn = document.getElementById('saveBtn');
+    saveBtn.disabled = true;
+    saveBtn.textContent = 'Сохранение…';
+
+    const selectedAvatar = document.querySelector('.avatar-option.selected')?.dataset.avatar || 'dog.png';
+    const nickname = document.getElementById('nickname').value.trim();
+    const birthDate = document.getElementById('birthDate').value;
+    const gender = document.getElementById('gender').value;
+    const description = document.getElementById('description').value.trim();
+
     try {
-      await supabase.auth.signOut();
-      window.location.href = 'index.html'; // или 'vhod.html'
+      const { error } = await supabase
+        .from('profiles')
+        .upsert({
+          id: currentUser.id,
+          nickname,
+          birth_date: birthDate || null,
+          gender: gender || null,
+          description: description || null,
+          avatar: selectedAvatar,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'id' });
+
+      if (error) throw error;
+
+      alert('Профиль успешно сохранён!');
     } catch (err) {
-      console.error('Ошибка при выходе:', err);
-      alert('Не удалось выйти. Попробуйте снова.');
+      console.error('Ошибка сохранения:', err);
+      alert('Не удалось сохранить профиль. Попробуйте позже.');
+    } finally {
+      saveBtn.disabled = false;
+      saveBtn.textContent = 'Сохранить профиль';
     }
   }
 
-  // Инициализация
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    window.location.href = 'index.html';
+  }
+
+  // Запуск
   loadProfile().catch(console.error);
-  logoutBtn.addEventListener('click', handleLogout);
 </script>
 
 </body>
