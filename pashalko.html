@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ФЕДЯ</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      margin: 0;
+      padding: 0;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      padding: 1.5rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+
+    header img {
+      height: 70px;
+      width: auto;
+      border-radius: 6px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    header .text {
+      flex: 1;
+      min-width: 250px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1.5rem;
+    }
+
+    h2 {
+      color: #0b3d91;
+      border-bottom: 2px solid #ddd;
+      padding-bottom: 0.5rem;
+      margin-top: 2rem;
+    }
+
+    p {
+      margin-bottom: 1rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .gallery img:hover {
+      transform: scale(1.03);
+    }
+
+    /* Стили для блока отзывов */
+    .reviews {
+      padding: 2rem 1.5rem;
+      background-color: #fff;
+      border-top: 1px solid #eee;
+      border-bottom: 1px solid #eee;
+      margin: 2rem auto;
+      max-width: 900px;
+    }
+
+    .review {
+      display: flex;
+      gap: 1.2rem;
+      align-items: flex-start;
+    }
+
+    .review-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #ddd;
+    }
+
+    .review-content {
+      flex: 1;
+    }
+
+    .review-author {
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin: 0 0 0.3rem 0;
+    }
+
+    .review-stars {
+      color: #ffb400;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+
+    .review-text {
+      margin: 0;
+      color: #444;
+      font-style: italic;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      margin-top: 0;
+      border-top: 1px solid #ddd;
+    }
+
+    /* Кнопка "Главная" */
+    .back-button {
+      background-color: #0a2e70;
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+      align-self: flex-start;
+    }
+
+    .back-button:hover {
+      background-color: #082355;
+    }
+
+    @media (max-width: 600px) {
+      header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      header img {
+        height: 60px;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+
+      .review {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .review-avatar {
+        width: 50px;
+        height: 50px;
+      }
+
+      .back-button {
+        align-self: center;
+        margin-top: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
+  <div class="text">
+  </div>
+  <a href="index.html" class="back-button">Главная</a>
+</header>
+
+<div class="container">
+
+</body>
+</html>
