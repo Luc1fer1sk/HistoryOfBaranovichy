@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Регистрация — Мой дом - история</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    .form-container h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      color: #0b3d91;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input:focus {
+      border-color: #0b3d91;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(11, 61, 145, 0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 0.9rem;
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #0066cc;
+    }
+
+    button:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .success {
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.2rem;
+      color: #0b3d91;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 480px) {
+      .form-container {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Регистрация</h1>
+</header>
+
+<main>
+  <div class="form-container">
+    <h2>Создайте аккаунт</h2>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" id="submitBtn">Зарегистрироваться</button>
+    </form>
+
+    <div id="errorMessage" class="error"></div>
+    <div id="successMessage" class="success">Регистрация успешна! Переход в профиль...</div>
+
+    <a href="index.html" class="back-link">← Вернуться на главную</a>
+  </div>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<script>
+  // === Настройте здесь ваши данные Supabase ===
+  const supabaseUrl = 'https://ВАШ-ПРОЕКТ.supabase.co'; // ← ЗАМЕНИТЕ!
+  const supabaseAnonKey = 'ваш-anon-public-key';        // ← ЗАМЕНИТЕ!
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const form = document.getElementById('registerForm');
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+  const submitBtn = document.getElementById('submitBtn');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+
+    // Очистка предыдущих сообщений
+    errorMessage.style.display = 'none';
+    successMessage.style.display = 'none';
+    submitBtn.disabled = true;
+
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: email,
+        password: password,
+        options: {
+          // По умолчанию Supabase отправляет email подтверждения
+          // Если хотите вход без подтверждения — настройте в Supabase Auth Settings
+        }
+      });
+
+      if (error) throw error;
+
+      // Успешная регистрация
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = 'profile.html';
+      }, 1500);
+
+    } catch (err) {
+      console.error('Ошибка регистрации:', err);
+      errorMessage.textContent = err.message || 'Неизвестная ошибка при регистрации.';
+      errorMessage.style.display = 'block';
+    } finally {
+      submitBtn.disabled = false;
+    }
+  });
+</script>
+
+</body>
+</html>
