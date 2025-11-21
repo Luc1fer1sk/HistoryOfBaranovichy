@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Редактирование профиля — Мой дом - история</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: center;
+    }
+
+    .form-container {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 550px;
+    }
+
+    .avatar-preview {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .avatar-option {
+      cursor: pointer;
+      opacity: 0.5;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    .avatar-option.selected {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+
+    .avatar-option img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      border: 2px solid #ddd;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+      color: #444;
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #0b3d91;
+      box-shadow: 0 0 0 2px rgba(11, 61, 145, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .save-btn {
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 0.9rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 1rem;
+      transition: background-color 0.2s;
+    }
+
+    .save-btn:hover {
+      background-color: #0066cc;
+    }
+
+    .save-btn:disabled {
+      background-color: #b0b0b0;
+      cursor: not-allowed;
+    }
+
+    .error {
+      color: #d32f2f;
+      background: #ffebee;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .success {
+      color: #2e7d32;
+      background: #e8f5e9;
+      padding: 0.7rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    .loading {
+      text-align: center;
+      color: #666;
+      padding: 2rem;
+      font-style: italic;
+    }
+
+    .back-link {
+      display: block;
+      margin-top: 1.5rem;
+      text-align: center;
+      color: #0b3d91;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 480px) {
+      .avatar-preview {
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>Редактирование профиля</h1>
+  <p>Измените свои данные</p>
+</header>
+
+<main>
+  <div class="form-container">
+    <div id="loadingMessage" class="loading">Загрузка профиля…</div>
+    <div id="errorMessage" class="error"></div>
+    <div id="successMessage" class="success">Профиль успешно обновлен! Перенаправление...</div>
+    
+    <form id="profileForm" style="display: none;">
+      <div class="avatar-preview">
+        <div class="avatar-option selected" data-avatar="dog.png">
+          <img src="img/dog.png" alt="Собака">
+          <div style="text-align:center; margin-top:0.3rem;">Собака</div>
+        </div>
+        <div class="avatar-option" data-avatar="cat.png">
+          <img src="img/cat.png" alt="Кошка">
+          <div style="text-align:center; margin-top:0.3rem;">Кошка</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="nickname">Никнейм *</label>
+        <input type="text" id="nickname" required maxlength="30">
+      </div>
+
+      <div class="form-group">
+        <label for="birthDate">Дата рождения</label>
+        <input type="date" id="birthDate">
+      </div>
+
+      <div class="form-group">
+        <label for="gender">Пол</label>
+        <select id="gender">
+          <option value="">— Не указан —</option>
+          <option value="male">Мужской</option>
+          <option value="female">Женский</option>
+          <option value="other">Другой</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">О себе</label>
+        <textarea id="description" placeholder="Расскажите немного о себе..."></textarea>
+      </div>
+
+      <button type="submit" class="save-btn" id="submitBtn">Сохранить изменения</button>
+    </form>
+
+    <a href="profile.html" class="back-link" style="display: none;" id="backLink">← Вернуться к профилю</a>
+    <a href="index.html" class="back-link" style="display: none;" id="backHomeLink">← Вернуться на главную</a>
+  </div>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<script>
+  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      flowType: 'pkce'
+    }
+  });
+
+  const errorMessage = document.getElementById('errorMessage');
+  const successMessage = document.getElementById('successMessage');
+  const loadingMessage = document.getElementById('loadingMessage');
+  const profileForm = document.getElementById('profileForm');
+  const submitBtn = document.getElementById('submitBtn');
+  const backLink = document.getElementById('backLink');
+  const backHomeLink = document.getElementById('backHomeLink');
+
+  // Загрузка существующего профиля и предзаполнение формы
+  async function loadProfile() {
+    try {
+      // Проверяем авторизацию
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError || !user) {
+        loadingMessage.style.display = 'none';
+        errorMessage.textContent = 'Вы не вошли в систему. Пожалуйста, сначала войдите.';
+        errorMessage.style.display = 'block';
+        backHomeLink.style.display = 'block';
+        setTimeout(() => {
+          window.location.href = 'vhod.html';
+        }, 3000);
+        return;
+      }
+
+      // Загружаем профиль из БД
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (profileError && profileError.code !== 'PGRST116') {
+        // PGRST116 - это код "не найдено", что нормально для нового профиля
+        console.error('Ошибка загрузки профиля:', profileError);
+        throw profileError;
+      }
+
+      // Предзаполняем форму данными из профиля
+      if (profile) {
+        // Аватар
+        const avatar = profile.avatar || 'dog.png';
+        document.querySelectorAll('.avatar-option').forEach(option => {
+          option.classList.remove('selected');
+          if (option.dataset.avatar === avatar) {
+            option.classList.add('selected');
+          }
+        });
+
+        // Никнейм
+        document.getElementById('nickname').value = profile.nickname || '';
+
+        // Дата рождения (формат YYYY-MM-DD для input type="date")
+        if (profile.birth_date) {
+          const birthDate = new Date(profile.birth_date);
+          const formattedDate = birthDate.toISOString().split('T')[0];
+          document.getElementById('birthDate').value = formattedDate;
+        }
+
+        // Пол
+        document.getElementById('gender').value = profile.gender || '';
+
+        // Описание
+        document.getElementById('description').value = profile.description || '';
+      }
+
+      // Показываем форму
+      loadingMessage.style.display = 'none';
+      profileForm.style.display = 'block';
+      backLink.style.display = 'block';
+      backHomeLink.style.display = 'block';
+
+    } catch (err) {
+      console.error('Ошибка загрузки профиля:', err);
+      loadingMessage.style.display = 'none';
+      errorMessage.textContent = 'Не удалось загрузить профиль. Попробуйте обновить страницу.';
+      errorMessage.style.display = 'block';
+      backHomeLink.style.display = 'block';
+    }
+  }
+
+  // Обработчик отправки формы
+  async function handleSubmit(e) {
+    e.preventDefault();
+
+    // Проверяем авторизацию
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+    if (authError || !user) {
+      errorMessage.textContent = 'Вы не вошли в систему. Пожалуйста, войдите заново.';
+      errorMessage.style.display = 'block';
+      return;
+    }
+
+    const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
+    const nickname = document.getElementById('nickname').value.trim();
+    const birthDateInput = document.getElementById('birthDate').value;
+    const gender = document.getElementById('gender').value || null;
+    const description = document.getElementById('description').value.trim() || null;
+    const birthDate = birthDateInput ? birthDateInput : null;
+
+    errorMessage.style.display = 'none';
+    successMessage.style.display = 'none';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Сохранение…';
+
+    try {
+      const profileData = {
+        id: user.id,
+        nickname: nickname,
+        birth_date: birthDate,
+        gender: gender,
+        description: description,
+        avatar: selectedAvatar,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Обновление профиля:', profileData);
+
+      const { error: dbError } = await supabase
+        .from('profiles')
+        .upsert(profileData, { onConflict: 'id' });
+
+      if (dbError) {
+        console.error('Ошибка БД:', dbError);
+        throw dbError;
+      }
+
+      console.log('Профиль успешно обновлен');
+      successMessage.style.display = 'block';
+      
+      // Перенаправляем на страницу профиля через 1.5 секунды
+      setTimeout(() => {
+        window.location.href = 'profile.html';
+      }, 1500);
+
+    } catch (err) {
+      console.error('Ошибка сохранения:', err);
+      errorMessage.textContent = err.message || 'Не удалось сохранить профиль. Проверьте подключение.';
+      errorMessage.style.display = 'block';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Сохранить изменения';
+    }
+  }
+
+  // Обработчики аватаров
+  document.querySelectorAll('.avatar-option').forEach(el => {
+    el.addEventListener('click', () => {
+      document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
+      el.classList.add('selected');
+    });
+  });
+
+  // Обработчик формы
+  profileForm.addEventListener('submit', handleSubmit);
+
+  // Загружаем профиль при загрузке страницы
+  loadProfile().catch(err => {
+    console.error('Ошибка:', err);
+    loadingMessage.style.display = 'none';
+    errorMessage.textContent = 'Произошла ошибка. Попробуйте обновить страницу.';
+    errorMessage.style.display = 'block';
+    backHomeLink.style.display = 'block';
+  });
+</script>
+
+</body>
+</html>
+
