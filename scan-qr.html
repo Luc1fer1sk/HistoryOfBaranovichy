@@ -22,6 +22,7 @@
       color: white;
       text-align: center;
       padding: 2rem 1rem;
+      position: relative;
     }
 
     header img {
@@ -34,6 +35,23 @@
     h1 {
       margin: 0;
       font-size: 2rem;
+    }
+
+    .back-button {
+      background-color: #0a2e70;
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+      display: inline-block;
+      margin-top: 1rem;
+    }
+
+    .back-button:hover {
+      background-color: #082355;
     }
 
     main {
@@ -92,6 +110,16 @@
       font-weight: 600;
       color: #0b3d91;
       display: none;
+      word-break: break-all;
+    }
+
+    #result a {
+      color: #0066cc;
+      text-decoration: underline;
+    }
+
+    #result a:hover {
+      color: #004c99;
     }
 
     button {
@@ -131,6 +159,10 @@
         padding: 0.6rem 1.2rem;
         font-size: 0.95rem;
       }
+
+      .back-button {
+        margin-top: 1.2rem;
+      }
     }
   </style>
 </head>
@@ -140,6 +172,7 @@
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
   <h1>Сканирование QR-кода</h1>
   <p>Загрузите фото или используйте камеру</p>
+  <a href="index.html" class="back-button">Главная</a>
 </header>
 
 <main>
@@ -159,7 +192,7 @@
     <button id="start-camera">Открыть камеру</button>
 
     <div id="video-container">
-      <video id="camera-video" autoplay playsinline></video>
+      <video id="camera-video" autoplay playsinline muted></video>
     </div>
   </div>
 
@@ -182,8 +215,8 @@
   const ctx = canvas.getContext('2d');
   const resultDiv = document.getElementById('result');
   let scanning = false;
+  let lastResult = '';
 
-  // Обработка загрузки изображения
   document.getElementById('qr-image-input').addEventListener('change', function(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -195,12 +228,12 @@
       canvas.width = img.width;
       canvas.height = img.height;
       ctx.drawImage(img, 0, 0, img.width, img.height);
-      tryDecodeQR(ctx.getImageData(0, 0, img.width, img.height));
+      const imageData = ctx.getImageData(0, 0, img.width, img.height);
+      processQRResult(imageData);
     };
     img.src = url;
   });
 
-  // Кнопка "Открыть камеру"
   document.getElementById('start-camera').addEventListener('click', async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
@@ -214,7 +247,6 @@
     }
   });
 
-  // Сканирование кадров с камеры
   function scanVideo() {
     if (!scanning) return;
 
@@ -223,28 +255,33 @@
       canvas.height = video.videoHeight;
       ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      tryDecodeQR(imageData);
+      processQRResult(imageData);
     }
 
     requestAnimationFrame(scanVideo);
   }
 
-  // Распознавание QR
-  function tryDecodeQR(imageData) {
-    const code = jsQR(imageData.data, imageData.width, imageData.height);
-    if (code) {
-      scanning = false;
-      if (video.srcObject) {
-        const tracks = video.srcObject.getTracks();
-        tracks.forEach(track => track.stop());
-      }
-      showResult(code.data);
+  function isValidUrl(str) {
+    try {
+      new URL(str);
+      return true;
+    } catch {
+      return false;
     }
   }
 
-  function showResult(text) {
-    resultDiv.textContent = 'Результат: ' + text;
-    resultDiv.style.display = 'block';
+  function processQRResult(imageData) {
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (code && code.data !== lastResult) {
+      lastResult = code.data;
+
+      if (isValidUrl(code.data)) {
+        resultDiv.innerHTML = `Результат: <a href="${code.data}" target="_blank" rel="noopener noreferrer">${code.data}</a>`;
+      } else {
+        resultDiv.innerHTML = `Результат: ${code.data}`;
+      }
+      resultDiv.style.display = 'block';
+    }
   }
 </script>
 </body>
