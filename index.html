@@ -6,140 +6,91 @@
   <title>Мой дом - история</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
   <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f5f7fa;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  header {
-    background: rgba(11, 61, 145, 0.95); /* Полупрозрачный синий */
-    color: white;
-    text-align: center;
-    padding: 2rem 1rem;
-    position: relative;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    overflow: hidden;
-  }
-
-  /* Диагональная линия справа (через псевдоэлемент) */
-  header::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 40%;
-    height: 100%;
-    background: linear-gradient(135deg, transparent 49%, white 50%);
-    z-index: 1;
-  }
-
-  /* Флаг Беларуси справа */
-  header::before {
-    content: '';
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 60px;
-    height: 40px;
-    background: url('img/Flag_of_Belarus.svg.png') no-repeat center / contain; /* Убедись, что файл существует */
-    z-index: 2;
-    border-radius: 4px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  }
-
-  header img {
-    height: 80px;
-    margin-bottom: 1rem;
-    border-radius: 8px;
-    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    z-index: 3;
-    position: relative;
-  }
-
-  h1 {
-    margin: 0;
-    font-size: 2rem;
-    z-index: 3;
-    position: relative;
-  }
-
-  p {
-    margin: 0.5rem 0 0;
-    font-size: 0.9rem;
-    opacity: 0.9;
-    z-index: 3;
-    position: relative;
-  }
-
-  main {
-    flex: 1;
-  }
-
-  .menu-container {
-    max-width: 800px;
-    margin: 3rem auto;
-    padding: 0 1.5rem;
-  }
-
-  .menu-item {
-    background: white;
-    margin-bottom: 1.2rem;
-    padding: 1.2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    transition: transform 0.2s, box-shadow 0.2s;
-    text-align: center;
-  }
-
-  .menu-item:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  }
-
-  .menu-item a {
-    text-decoration: none;
-    color: #0b3d91;
-    font-size: 1.3rem;
-    font-weight: 600;
-    display: block;
-  }
-
-  .menu-item a:hover {
-    color: #0066cc;
-  }
-
-  footer {
-    text-align: center;
-    padding: 1.5rem;
-    background-color: #eef2f7;
-    color: #666;
-    border-top: 1px solid #ddd;
-  }
-
-  @media (max-width: 600px) {
-    .menu-item a {
-      font-size: 1.1rem;
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* Занимает минимум всю высоту экрана */
     }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header img {
+      height: 80px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
     h1 {
-      font-size: 1.6rem;
+      margin: 0;
+      font-size: 2rem;
     }
-    header::after {
-      width: 60%;
+
+    main {
+      flex: 1; /* Растягивается, чтобы footer прилипал к низу */
     }
-    header::before {
-      width: 40px;
-      height: 30px;
-      top: 0.5rem;
-      right: 0.5rem;
+
+    .menu-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
     }
-  }
-</style>
+
+    .menu-item {
+      background: white;
+      margin-bottom: 1.2rem;
+      padding: 1.2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .menu-item a {
+      text-decoration: none;
+      color: #0b3d91;
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .menu-item a:hover {
+      color: #0066cc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      .menu-item a {
+        font-size: 1.1rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -163,5 +114,3 @@
 
 </body>
 </html>
-
-
