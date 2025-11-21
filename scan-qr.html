@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Сканирование QR-кода</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header img {
+      height: 80px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem 1rem;
+      gap: 1.5rem;
+    }
+
+    .instructions {
+      max-width: 600px;
+      text-align: center;
+      font-size: 1.1rem;
+      color: #555;
+    }
+
+    .upload-area, .camera-area {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 500px;
+    }
+
+    .upload-area input[type="file"] {
+      margin-top: 1rem;
+      font-size: 1rem;
+    }
+
+    #video-container {
+      position: relative;
+      margin-top: 1rem;
+      display: none;
+    }
+
+    #camera-video {
+      width: 100%;
+      max-width: 400px;
+      border-radius: 8px;
+      background: #000;
+    }
+
+    #canvas {
+      display: none;
+    }
+
+    #result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #e6f7ff;
+      border-radius: 8px;
+      font-weight: 600;
+      color: #0b3d91;
+      display: none;
+    }
+
+    button {
+      background-color: #0b3d91;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 1rem;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background-color: #0066cc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .upload-area, .camera-area {
+        padding: 1.2rem;
+      }
+
+      button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.95rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
+  <h1>Сканирование QR-кода</h1>
+  <p>Загрузите фото или используйте камеру</p>
+</header>
+
+<main>
+  <div class="instructions">
+    <p>Выберите способ распознавания QR-кода:</p>
+  </div>
+
+  <!-- Загрузка фото -->
+  <div class="upload-area">
+    <h2>Загрузить фото с QR-кодом</h2>
+    <input type="file" id="qr-image-input" accept="image/*">
+  </div>
+
+  <!-- Камера -->
+  <div class="camera-area">
+    <h2>Сканировать через камеру</h2>
+    <button id="start-camera">Открыть камеру</button>
+
+    <div id="video-container">
+      <video id="camera-video" autoplay playsinline></video>
+    </div>
+  </div>
+
+  <!-- Результат -->
+  <div id="result"></div>
+
+  <!-- Скрытое canvas для обработки -->
+  <canvas id="canvas"></canvas>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<!-- Подключаем библиотеку jsQR -->
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.min.js"></script>
+<script>
+  const video = document.getElementById('camera-video');
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  const resultDiv = document.getElementById('result');
+  let scanning = false;
+
+  // Обработка загрузки изображения
+  document.getElementById('qr-image-input').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const img = new Image();
+    const url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0, img.width, img.height);
+      tryDecodeQR(ctx.getImageData(0, 0, img.width, img.height));
+    };
+    img.src = url;
+  });
+
+  // Кнопка "Открыть камеру"
+  document.getElementById('start-camera').addEventListener('click', async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      video.srcObject = stream;
+      document.getElementById('video-container').style.display = 'block';
+      scanning = true;
+      requestAnimationFrame(scanVideo);
+    } catch (err) {
+      alert('Не удалось получить доступ к камере. Убедитесь, что разрешили доступ и используете HTTPS (или localhost).');
+      console.error(err);
+    }
+  });
+
+  // Сканирование кадров с камеры
+  function scanVideo() {
+    if (!scanning) return;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      tryDecodeQR(imageData);
+    }
+
+    requestAnimationFrame(scanVideo);
+  }
+
+  // Распознавание QR
+  function tryDecodeQR(imageData) {
+    const code = jsQR(imageData.data, imageData.width, imageData.height);
+    if (code) {
+      scanning = false;
+      if (video.srcObject) {
+        const tracks = video.srcObject.getTracks();
+        tracks.forEach(track => track.stop());
+      }
+      showResult(code.data);
+    }
+  }
+
+  function showResult(text) {
+    resultDiv.textContent = 'Результат: ' + text;
+    resultDiv.style.display = 'block';
+  }
+</script>
+</body>
+</html>
