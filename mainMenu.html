@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Горисполком Барановичей — Главное меню</title>
+  <link rel="icon" type="image/png" href="img/favicon.png">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header img {
+      height: 80px;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2rem;
+    }
+
+    .menu-container {
+      max-width: 800px;
+      margin: 3rem auto;
+      padding: 0 1.5rem;
+    }
+
+    .menu-item {
+      background: white;
+      margin-bottom: 1.2rem;
+      padding: 1.2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s;
+      text-align: center;
+    }
+
+    .menu-item:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .menu-item a {
+      text-decoration: none;
+      color: #0b3d91;
+      font-size: 1.3rem;
+      font-weight: 600;
+      display: block;
+    }
+
+    .menu-item a:hover {
+      color: #0066cc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.5rem;
+      background-color: #eef2f7;
+      color: #666;
+      margin-top: 3rem;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      .menu-item a {
+        font-size: 1.1rem;
+      }
+
+      h1 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/header-logo.jpg" alt="Горисполком Барановичей">
+  <h1>Барановичский горисполком</h1>
+  <p>Выберите раздел для просмотра</p>
+</header>
+
+<div class="menu-container">
+  <div class="menu-item">
+    <a href="history.html">📖 История</a>
+  </div>
+  <div class="menu-item">
+    <a href="building.html">🏛️ Здание горисполкома</a>
+  </div>
+  <div class="menu-item">
+    <a href="gallery.html">🖼️ Фотографии в разные годы</a>
+  </div>
+  <div class="menu-item">
+    <a href="reviews.html">💬 Отзывы посетителей</a>
+  </div>
+</div>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+</body>
+</html>
