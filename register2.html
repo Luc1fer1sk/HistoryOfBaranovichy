@@ -7,6 +7,7 @@
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* ... ваш CSS без изменений ... */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -169,12 +170,12 @@
     <div id="errorMessage" class="error"></div>
     <form id="profileForm">
       <div class="avatar-preview">
-        <div class="avatar-option selected" data-avatar="dog.jpg">
-          <img src="img/dog.jpg" alt="Собака">
+        <div class="avatar-option selected" data-avatar="dog.png">
+          <img src="img/dog.png" alt="Собака">
           <div style="text-align:center; margin-top:0.3rem;">Собака</div>
         </div>
-        <div class="avatar-option" data-avatar="cat.jpg">
-          <img src="img/cat.jpg" alt="Кошка">
+        <div class="avatar-option" data-avatar="cat.png">
+          <img src="img/cat.png" alt="Кошка">
           <div style="text-align:center; margin-top:0.3rem;">Кошка</div>
         </div>
       </div>
@@ -223,26 +224,30 @@
   const errorMessage = document.getElementById('errorMessage');
   const submitBtn = document.getElementById('submitBtn');
 
-  // Проверяем, что пользователь авторизован
-  async function checkAuth() {
+  // Проверка авторизации + защита
+  async function getCurrentUser() {
     const {  { user }, error } = await supabase.auth.getUser();
     if (error || !user) {
+      alert('Вы не авторизованы. Перенаправление на страницу входа.');
       window.location.href = 'vhod.html';
+      return null;
     }
     return user;
   }
 
-  // Обработчик отправки
   async function handleSubmit(e) {
     e.preventDefault();
-    const user = await checkAuth();
+    const user = await getCurrentUser();
     if (!user) return;
 
     const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
     const nickname = document.getElementById('nickname').value.trim();
-    const birthDate = document.getElementById('birthDate').value || null;
+    const birthDateInput = document.getElementById('birthDate').value;
     const gender = document.getElementById('gender').value || null;
     const description = document.getElementById('description').value.trim() || null;
+
+    // 🔑 ВАЖНО: дата должна быть либо в формате YYYY-MM-DD, либо null
+    const birthDate = birthDateInput ? birthDateInput : null;
 
     errorMessage.style.display = 'none';
     submitBtn.disabled = true;
@@ -253,31 +258,29 @@
         .from('profiles')
         .upsert({
           id: user.id,
-          nickname,
-          birth_date: birthDate,
-          gender,
-          description,
+          nickname: nickname,
+          birth_date: birthDate, // null, если не указано
+          gender: gender,
+          description: description,
           avatar: selectedAvatar,
           updated_at: new Date().toISOString()
         }, { onConflict: 'id' });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-      // Успешно → переходим в профиль
+      // Успех → редирект
       window.location.href = 'profile.html';
 
     } catch (err) {
-      console.error('Ошибка:', err);
-      errorMessage.textContent = 'Не удалось сохранить данные. Попробуйте снова.';
+      console.error('Ошибка сохранения профиля:', err);
+      errorMessage.textContent = 'Не удалось сохранить профиль. Проверьте подключение и попробуйте снова.';
       errorMessage.style.display = 'block';
       submitBtn.disabled = false;
       submitBtn.textContent = 'Сохранить и перейти в профиль';
     }
   }
-
-  // Инициализация
-  checkAuth();
-  document.getElementById('profileForm').addEventListener('submit', handleSubmit);
 
   // Обработчик выбора аватара
   document.querySelectorAll('.avatar-option').forEach(el => {
@@ -286,6 +289,9 @@
       el.classList.add('selected');
     });
   });
+
+  // Инициализация
+  document.getElementById('profileForm').addEventListener('submit', handleSubmit);
 </script>
 
 </body>
