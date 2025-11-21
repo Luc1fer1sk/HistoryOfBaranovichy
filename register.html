@@ -190,7 +190,6 @@
 <script>
   const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
-
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
   const form = document.getElementById('registerForm');
@@ -209,7 +208,6 @@
     submitBtn.disabled = true;
 
     try {
-      // Шаг 1: Регистрация пользователя
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password
@@ -217,21 +215,9 @@
 
       if (error) throw error;
 
-      if (!data.user) {
-        throw new Error('Не удалось создать пользователя.');
-      }
-
-   
-
-      if (profileError) {
-        console.warn('Профиль не создан:', profileError.message);
-        // Можно не прерывать — пользователь всё равно зарегистрирован
-      }
-
-      // Успешно
       successMessage.style.display = 'block';
       setTimeout(() => {
-        window.location.href = 'register2.html';
+        window.location.href = 'register2.html'; // ← важно: не profile.html!
       }, 1500);
 
     } catch (err) {
