@@ -226,7 +226,7 @@
 
   // Проверка авторизации + защита
   async function getCurrentUser() {
-    const {  { user }, error } = await supabase.auth.getUser();
+    const {  user , error } = await supabase.auth.getUser();
     if (error || !user) {
       alert('Вы не авторизованы. Перенаправление на страницу входа.');
       window.location.href = 'vhod.html';
