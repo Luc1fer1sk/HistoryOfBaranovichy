@@ -31,7 +31,7 @@
     .profile-icon {
       position: absolute;
       top: 1rem;
-      right: 1rem;
+      left: 1rem;
       width: 40px;
       height: 40px;
       background-color: white;
@@ -44,6 +44,14 @@
       text-decoration: none;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       transition: transform 0.2s;
+      overflow: hidden;
+    }
+
+    .profile-icon img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
     }
 
     .profile-icon:hover {
@@ -110,7 +118,7 @@
     @media (max-width: 600px) {
       .profile-icon {
         top: 0.8rem;
-        right: 0.8rem;
+        left: 0.8rem;
         width: 36px;
         height: 36px;
         font-size: 0.9rem;
@@ -159,20 +167,57 @@
   const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co'; // ← ЗАМЕНИТЕ!
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';        // ← ЗАМЕНИТЕ!
 
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
+    auth: {
+      flowType: 'pkce'
+    }
+  });
 
   const profileLink = document.getElementById('profileLink');
 
-  // Проверяем, авторизован ли пользователь
+  // Проверяем, авторизован ли пользователь и загружаем аватар
   async function checkAuth() {
-    const { data: { user } } = await supabase.auth.getUser();
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (user) {
-      // Пользователь авторизован → ведём в профиль
-      profileLink.href = 'profile.html';
-    } else {
-      // Не авторизован → ведём на регистрацию
+      if (user && !authError) {
+        // Пользователь авторизован → загружаем профиль с аватаром
+        profileLink.href = 'profile.html';
+        
+        // Загружаем профиль для получения аватара
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('avatar')
+          .eq('id', user.id)
+          .single();
+
+        const avatar = profile?.avatar || 'dog.png';
+        // Безопасное экранирование имени файла
+        const safeAvatar = (avatar === 'dog.png' || avatar === 'cat.png') ? avatar : 'dog.png';
+        const avatarUrl = `img/${safeAvatar}`;
+        
+        // Показываем аватар пользователя
+        const img = document.createElement('img');
+        img.src = avatarUrl;
+        img.alt = 'Аватар';
+        img.style.width = '100%';
+        img.style.height = '100%';
+        img.style.objectFit = 'cover';
+        img.style.borderRadius = '50%';
+        img.onerror = () => {
+          profileLink.innerHTML = '👤';
+        };
+        profileLink.innerHTML = '';
+        profileLink.appendChild(img);
+      } else {
+        // Не авторизован → показываем эмодзи и ведём на регистрацию
+        profileLink.href = 'register.html';
+        profileLink.innerHTML = '👤';
+      }
+    } catch (err) {
+      console.error('Ошибка проверки авторизации:', err);
       profileLink.href = 'register.html';
+      profileLink.innerHTML = '👤';
     }
   }
 
