@@ -40,100 +40,162 @@
 
     .profile-container {
       background: white;
-      padding: 2rem;
-      border-radius: 12px;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      padding: 0;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
       width: 100%;
-      max-width: 550px;
+      max-width: 700px;
+      overflow: hidden;
     }
 
-    .avatar-preview {
-      display: flex;
-      justify-content: center;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
+    .profile-header {
+      background: linear-gradient(135deg, #0b3d91 0%, #0066cc 100%);
+      padding: 3rem 2rem 2rem;
+      text-align: center;
+      color: white;
+      position: relative;
     }
 
-    .avatar-option {
-      cursor: pointer;
-      opacity: 0.5;
-      transition: opacity 0.2s, transform 0.2s;
-    }
-
-    .avatar-option.selected {
-      opacity: 1;
-      transform: scale(1.1);
-    }
-
-    .avatar-option img {
-      width: 80px;
-      height: 80px;
+    .profile-avatar {
+      width: 150px;
+      height: 150px;
       border-radius: 50%;
-      border: 2px solid #ddd;
+      border: 5px solid white;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      object-fit: cover;
     }
 
-    .form-group {
-      margin-bottom: 1.2rem;
+    .profile-name {
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 0 0.5rem 0;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
-    label {
-      display: block;
-      margin-bottom: 0.4rem;
-      font-weight: 600;
-      color: #444;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+    .profile-email {
       font-size: 1rem;
-      box-sizing: border-box;
+      opacity: 0.9;
+      margin: 0;
     }
 
-    textarea {
-      resize: vertical;
-      min-height: 80px;
+    .profile-body {
+      padding: 2rem;
     }
 
-    .save-btn {
+    .info-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #0b3d91;
+    }
+
+    .info-card h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      color: #0b3d91;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card .info-item {
+      display: flex;
+      align-items: center;
+      padding: 0.8rem 0;
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .info-card .info-item:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-weight: 600;
+      color: #666;
+      min-width: 140px;
+      font-size: 0.95rem;
+    }
+
+    .info-value {
+      color: #333;
+      font-size: 1rem;
+    }
+
+    .info-value.empty {
+      color: #999;
+      font-style: italic;
+    }
+
+    .description-card {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid #0066cc;
+    }
+
+    .description-card h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+      color: #0066cc;
+      font-weight: 600;
+    }
+
+    .description-text {
+      color: #555;
+      line-height: 1.6;
+      font-size: 1rem;
+      white-space: pre-wrap;
+    }
+
+    .description-text.empty {
+      color: #999;
+      font-style: italic;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .edit-btn {
       background-color: #0b3d91;
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 0.9rem;
-      font-size: 1.1rem;
+      border-radius: 8px;
+      padding: 0.9rem 2rem;
+      font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      margin-top: 1rem;
+      flex: 1;
+      transition: background-color 0.2s, transform 0.1s;
     }
 
-    .save-btn:hover {
+    .edit-btn:hover {
       background-color: #0066cc;
-    }
-
-    .save-btn:disabled {
-      background-color: #b0b0b0;
-      cursor: not-allowed;
+      transform: translateY(-2px);
     }
 
     .logout-btn {
       background-color: #d32f2f;
       color: white;
       border: none;
-      border-radius: 6px;
-      padding: 0.8rem;
+      border-radius: 8px;
+      padding: 0.9rem 2rem;
       font-size: 1rem;
       font-weight: 600;
       cursor: pointer;
-      width: 100%;
-      margin-top: 0.8rem;
+      flex: 1;
+      transition: background-color 0.2s, transform 0.1s;
     }
 
     .logout-btn:hover {
       background-color: #b71c1c;
+      transform: translateY(-2px);
     }
 
     .back-link {
@@ -143,9 +205,12 @@
       color: #0b3d91;
       text-decoration: none;
       font-weight: 600;
+      padding: 0.5rem;
+      transition: color 0.2s;
     }
 
     .back-link:hover {
+      color: #0066cc;
       text-decoration: underline;
     }
 
@@ -153,7 +218,22 @@
       text-align: center;
       color: #666;
       font-style: italic;
+      padding: 3rem;
+      font-size: 1.1rem;
+    }
+
+    .icon {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      margin-right: 0.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
       padding: 2rem;
+      color: #999;
+      font-style: italic;
     }
 
     footer {
@@ -165,15 +245,43 @@
     }
 
     @media (max-width: 480px) {
-      .avatar-preview {
-        flex-direction: column;
-        align-items: center;
-        gap: 1rem;
+      .profile-header {
+        padding: 2rem 1.5rem 1.5rem;
       }
 
-      .avatar-option img {
-        width: 70px;
-        height: 70px;
+      .profile-avatar {
+        width: 120px;
+        height: 120px;
+      }
+
+      .profile-name {
+        font-size: 1.5rem;
+      }
+
+      .profile-body {
+        padding: 1.5rem;
+      }
+
+      .info-card, .description-card {
+        padding: 1rem;
+      }
+
+      .info-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.3rem;
+      }
+
+      .info-label {
+        min-width: auto;
+      }
+
+      .action-buttons {
+        flex-direction: column;
+      }
+
+      .edit-btn, .logout-btn {
+        width: 100%;
       }
     }
   </style>
@@ -206,104 +314,109 @@
 });
 
   // --- ФУНКЦИИ ---
-  function renderProfileForm(email, profile) {
-    const avatar = profile.avatar || 'dog.png';
-    const nickname = profile.nickname || '';
-    const birthDate = profile.birth_date ? profile.birth_date.split('T')[0] : '';
-    const gender = profile.gender || '';
-    const description = profile.description || '';
+  function escapeHtml(text) {
+    if (!text) return '';
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  function formatDate(dateString) {
+    if (!dateString) return null;
+    const date = new Date(dateString);
+    return date.toLocaleDateString('ru-RU', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
+  }
+
+  function formatGender(gender) {
+    const genderMap = {
+      'male': 'Мужской',
+      'female': 'Женский',
+      'other': 'Другой'
+    };
+    return genderMap[gender] || 'Не указан';
+  }
+
+  function calculateAge(birthDate) {
+    if (!birthDate) return null;
+    const today = new Date();
+    const birth = new Date(birthDate);
+    let age = today.getFullYear() - birth.getFullYear();
+    const monthDiff = today.getMonth() - birth.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+      age--;
+    }
+    return age;
+  }
+
+  function renderProfile(user, profile) {
+    const avatar = profile?.avatar || 'dog.png';
+    const nickname = profile?.nickname || 'Пользователь';
+    const email = user?.email || '';
+    const birthDate = profile?.birth_date || null;
+    const gender = profile?.gender || '';
+    const description = profile?.description || '';
+    
+    const formattedDate = formatDate(birthDate);
+    const age = calculateAge(birthDate);
+    const ageText = age !== null ? ` (${age} ${age % 10 === 1 && age % 100 !== 11 ? 'год' : age % 10 >= 2 && age % 10 <= 4 && (age % 100 < 10 || age % 100 >= 20) ? 'года' : 'лет'})` : '';
+
+    // Экранируем HTML для безопасности
+    const safeNickname = escapeHtml(nickname || 'Пользователь');
+    const safeEmail = escapeHtml(email);
+    const safeDescription = description ? description.split('\n').map(line => escapeHtml(line)).join('<br>') : '';
 
     const html = `
-      <h2 style="text-align:center;color:#0b3d91;margin-top:0;">Добро пожаловать!</h2>
-      <p style="text-align:center;color:#555;margin-bottom:1.5rem;">${email}</p>
-
-      <div class="avatar-preview">
-        <div class="avatar-option ${avatar === 'dog.png' ? 'selected' : ''}" data-avatar="dog.png">
-          <img src="img/dog.png" alt="Собака">
-          <div style="text-align:center; margin-top:0.3rem;">Собака</div>
-        </div>
-        <div class="avatar-option ${avatar === 'cat.png' ? 'selected' : ''}" data-avatar="cat.png">
-          <img src="img/cat.png" alt="Кошка">
-          <div style="text-align:center; margin-top:0.3rem;">Кошка</div>
-        </div>
+      <div class="profile-header">
+        <img src="img/${escapeHtml(avatar)}" alt="Аватар" class="profile-avatar">
+        <h1 class="profile-name">${safeNickname}</h1>
+        <p class="profile-email">${safeEmail}</p>
       </div>
 
-      <form id="profileForm">
-        <div class="form-group">
-          <label for="nickname">Никнейм</label>
-          <input type="text" id="nickname" value="${nickname}" maxlength="30">
+      <div class="profile-body">
+        <div class="info-card">
+          <h3>📋 Личная информация</h3>
+          <div class="info-item">
+            <span class="info-label">Никнейм:</span>
+            <span class="info-value">${safeNickname || '<span class="empty">Не указан</span>'}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Дата рождения:</span>
+            <span class="info-value">${formattedDate ? escapeHtml(formattedDate) + escapeHtml(ageText) : '<span class="empty">Не указана</span>'}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Пол:</span>
+            <span class="info-value">${escapeHtml(formatGender(gender))}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email:</span>
+            <span class="info-value">${safeEmail}</span>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label for="birthDate">Дата рождения</label>
-          <input type="date" id="birthDate" value="${birthDate}">
+        <div class="description-card">
+          <h3>📝 О себе</h3>
+          <div class="description-text">${safeDescription || '<span class="empty">Информация о себе не указана</span>'}</div>
         </div>
 
-        <div class="form-group">
-          <label for="gender">Пол</label>
-          <select id="gender">
-            <option value="">— Не указан —</option>
-            <option value="male" ${gender === 'male' ? 'selected' : ''}>Мужской</option>
-            <option value="female" ${gender === 'female' ? 'selected' : ''}>Женский</option>
-            <option value="other" ${gender === 'other' ? 'selected' : ''}>Другой</option>
-          </select>
+        <div class="action-buttons">
+          <button class="edit-btn" onclick="window.location.href='register2.html'">✏️ Редактировать профиль</button>
+          <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
         </div>
 
-        <div class="form-group">
-          <label for="description">О себе</label>
-          <textarea id="description" placeholder="Расскажите немного о себе...">${description}</textarea>
-        </div>
-
-        <button type="submit" class="save-btn">Сохранить профиль</button>
-      </form>
-
-      <button class="logout-btn">Выйти</button>
-      <a href="index.html" class="back-link">← Вернуться на главную</a>
+        <a href="index.html" class="back-link">← Вернуться на главную</a>
+      </div>
     `;
 
     document.getElementById('profileContent').innerHTML = html;
 
-    // Обработчики
-    document.querySelectorAll('.avatar-option').forEach(el => {
-      el.addEventListener('click', () => {
-        document.querySelectorAll('.avatar-option').forEach(e => e.classList.remove('selected'));
-        el.classList.add('selected');
-      });
-    });
-
-    document.getElementById('profileForm').addEventListener('submit', saveProfile);
-    document.querySelector('.logout-btn').addEventListener('click', handleLogout);
+    // Обработчик выхода
+    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
   }
 
-  async function saveProfile(e) {
-    e.preventDefault();
-    const user = (await supabase.auth.getUser()).data.user;
-    if (!user) return;
-
-    const selectedAvatar = document.querySelector('.avatar-option.selected')?.dataset.avatar || 'dog.png';
-    const nickname = document.getElementById('nickname').value.trim();
-    const birthDate = document.getElementById('birthDate').value || null;
-    const gender = document.getElementById('gender').value || null;
-    const description = document.getElementById('description').value.trim() || null;
-
-    const { error } = await supabase
-      .from('profiles')
-      .upsert({
-        id: user.id,
-        nickname,
-        birth_date: birthDate,
-        gender,
-        description,
-        avatar: selectedAvatar,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'id' });
-
-    if (error) {
-      alert('Ошибка сохранения: ' + error.message);
-    } else {
-      alert('Профиль сохранён!');
-    }
-  }
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -311,27 +424,30 @@
   }
 
   async function loadProfile() {
-    const {  { user }, error } = await supabase.auth.getUser();
+    try {
+      const { data: { user }, error: authError } = await supabase.auth.getUser();
 
-    if (error || !user) {
-      window.location.href = 'vhod.html';
-      return;
+      if (authError || !user) {
+        window.location.href = 'vhod.html';
+        return;
+      }
+
+      const { data: profile, error: dbError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      // Если профиль не найден, показываем с пустыми данными
+      renderProfile(user, profile || null);
+    } catch (err) {
+      console.error('Ошибка загрузки профиля:', err);
+      document.getElementById('profileContent').innerHTML = 
+        `<div class="empty-state">
+          <p>Не удалось загрузить профиль. Попробуйте обновить страницу.</p>
+          <a href="index.html" class="back-link" style="margin-top: 1rem;">← Вернуться на главную</a>
+        </div>`;
     }
-
-    const { data: profile, error: dbError } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    // Если профиль не найден — используем пустой объект
-    renderProfileForm(user.email, profile || {
-      avatar: 'dog.png',
-      nickname: '',
-      birth_date: null,
-      gender: '',
-      description: ''
-    });
   }
 
   // Запуск
