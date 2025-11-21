@@ -221,13 +221,7 @@
         throw new Error('Не удалось создать пользователя.');
       }
 
-      // Шаг 2: Создаём пустую запись в profiles
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          avatar: 'dog.png' // значение по умолчанию
-        });
+   
 
       if (profileError) {
         console.warn('Профиль не создан:', profileError.message);
