@@ -25,7 +25,7 @@
       background-color: #0b3d91;
       color: white;
       text-align: center;
-      padding: 1.2rem 1rem 0.6rem; /* уменьшен нижний отступ */
+      padding: 1.2rem 1rem 0.6rem;
       position: relative;
     }
 
@@ -60,7 +60,7 @@
 
     main {
       flex: 1;
-      padding: 0 1rem 1rem; /* убран верхний отступ */
+      padding: 0 1rem 1rem;
       display: flex;
       flex-direction: column;
     }
@@ -72,7 +72,6 @@
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       background-color: #e0e0e0;
-      /* margin-top убран — карта прижата вверх */
     }
 
     footer {
@@ -81,6 +80,56 @@
       background-color: #eef2f7;
       color: #666;
       border-top: 1px solid #ddd;
+    }
+
+    /* Кастомный стиль popup'а */
+    .leaflet-popup-content-wrapper {
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      padding: 0;
+      overflow: hidden;
+    }
+
+    .leaflet-popup-content {
+      margin: 0;
+      padding: 0;
+      width: 300px;
+      max-width: 90vw;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      background: white;
+    }
+
+    .popup-image {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+      flex-shrink: 0;
+    }
+
+    .popup-info {
+      padding: 0.8rem 0;
+    }
+
+    .popup-info h3 {
+      margin: 0 0 0.4rem 0;
+      color: #0b3d91;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .popup-info p {
+      margin: 0.3rem 0;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+
+    .popup-info p:first-child {
+      font-weight: 600;
+      color: #333;
     }
 
     @media (max-width: 600px) {
@@ -99,6 +148,22 @@
       #map {
         height: 300px;
       }
+
+      .leaflet-popup-content {
+        width: 260px;
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .popup-image {
+        width: 100px;
+        height: 100px;
+        margin: 0 auto;
+      }
+
+      .popup-info {
+        padding: 0.6rem;
+      }
     }
   </style>
 </head>
@@ -107,7 +172,7 @@
 <header>
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
   <h1>Исторические места Барановичей</h1>
-  <p>Кликните по маркеру, чтобы перейти к описанию</p>
+  <p>Наведите курсор на маркер, чтобы увидеть информацию</p>
   <a href="index.html" class="back-button">Главная</a>
 </header>
 
@@ -131,24 +196,75 @@
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  // Объекты: [название, широта, долгота, URL]
+  // Объекты: [название, широта, долгота, URL, изображение, адрес, описание]
   const places = [
-    ["Барановичский технологический колледж", 53.1328, 26.0217, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BTK.html"],
-    ["Городской исполнительный комитет", 53.1317, 26.0182, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/GIK.html"],
-    ["Барановичский полесский вокзал", 53.1293, 26.0426, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BCV.html"],
-    ["Дом Феди", 59.856185, 30.317545, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/pashalko.html"]
+    [
+      "Барановичский технологический колледж",
+      53.1328,
+      26.0217,
+      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BTK.html",
+      "img/BTK1.jpeg",
+      "пл. Ленина, д. 5, г. Барановичи",
+      "Образование, традиции и будущее кооперативной отрасли."
+    ],
+    [
+      "Городской исполнительный комитет",
+      53.1317,
+      26.0182,
+      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/GIK.html",
+      "img/1960-ispolkom-1871by.jpg",
+      "пл. Ленина, д. 2, г. Барановичи",
+      "Административное здание в центре города, символ городской власти с советских времён."
+    ],
+    [
+      "Барановичский полесский вокзал",
+      53.1293,
+      26.0426,
+      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BCV.html",
+      "img/BCV1.png",
+      "пр. Железнодорожный, д. 1, г. Барановичи",
+      "Сердце транспортной системы города с 1884 года."
+    ]
   ];
 
   // Добавляем маркеры
   places.forEach(place => {
-    const [name, lat, lng, url] = place;
+    const [name, lat, lng, url, imgSrc, address, desc] = place;
+
     const marker = L.marker([lat, lng]).addTo(map);
-    
+
+    // Создаём кастомный popup
+    const popupContent = `
+      <div class="leaflet-popup-content">
+        <img class="popup-image" src="${imgSrc}" alt="${name}">
+        <div class="popup-info">
+          <h3>${name}</h3>
+          <p><strong>Адрес:</strong> ${address}</p>
+          <p>${desc}</p>
+        </div>
+      </div>
+    `;
+
+    const popup = L.popup({
+      closeButton: false, // Убираем крестик закрытия
+      autoClose: false,   // Не закрывать при клике вне
+      closeOnClick: false // Не закрывать при клике на карте
+    }).setContent(popupContent);
+
+    // Показываем popup при наведении
+    marker.on('mouseover', function(e) {
+      this.bindPopup(popup).openPopup();
+    });
+
+    // Закрываем popup при уходе мыши
+    marker.on('mouseout', function(e) {
+      this.closePopup();
+    });
+
+    // Также можно добавить переход по клику
     marker.on('click', () => {
       window.open(url, '_blank');
     });
-
-    marker.bindPopup(`<b>${name}</b><br><a href="${url}" target="_blank">Подробнее</a>`);
   });
 </script>
 
