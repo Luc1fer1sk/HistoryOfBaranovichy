@@ -1,1 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Мой дом - история (Карта)</title>
+  <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
 
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background-color: #0b3d91;
+      color: white;
+      text-align: center;
+      padding: 1.5rem 1rem;
+    }
+
+    header img {
+      height: 70px;
+      margin-bottom: 0.8rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    main {
+      flex: 1;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    #map {
+      flex: 1;
+      height: 500px;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-top: 1rem;
+      background-color: #e0e0e0;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1.2rem;
+      background-color: #eef2f7;
+      color: #666;
+      border-top: 1px solid #ddd;
+    }
+
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      #map {
+        height: 300px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
+  <h1>Исторические места Барановичей</h1>
+  <p>Кликните по маркеру, чтобы перейти к описанию</p>
+</header>
+
+<main>
+  <div id="map"></div>
+</main>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+  // Центрируем карту на Барановичах (координаты можно уточнить)
+  const map = L.map('map').setView([53.1325, 25.9992], 14);
+
+  // Базовый слой OpenStreetMap
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+  }).addTo(map);
+
+  // Примеры объектов: [название, широта, долгота, URL]
+  const places = [
+    ["Железнодорожный вокзал", 53.1318, 26.0030, "https://example.com/vokzal"],
+    ["Парк культуры и отдыха", 53.1350, 25.9970, "https://example.com/park"],
+    ["Свято-Покровский храм", 53.1290, 26.0050, "https://example.com/hram"]
+  ];
+
+  // Добавляем маркеры
+  places.forEach(place => {
+    const [name, lat, lng, url] = place;
+    const marker = L.marker([lat, lng]).addTo(map);
+    
+    // При клике по маркеру — переход по ссылке
+    marker.on('click', () => {
+      window.open(url, '_blank'); // или location.href = url — если без новой вкладки
+    });
+
+    // Опционально: всплывающая подсказка
+    marker.bindPopup(`<b>${name}</b><br><a href="${url}" target="_blank">Подробнее</a>`);
+  });
+</script>
+
+</body>
+</html>
