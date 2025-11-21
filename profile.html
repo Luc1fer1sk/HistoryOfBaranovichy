@@ -7,6 +7,7 @@
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* ... ваш CSS без изменений ... */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
@@ -200,28 +201,8 @@
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
 
-  let currentUser = null;
-
-  // Загружаем профиль
-  async function loadProfile() {
-    const {  { user } } = await supabase.auth.getUser();
-    if (!user) {
-      window.location.href = 'vhod.html';
-      return;
-    }
-    currentUser = user;
-
-    // Получаем данные из таблицы profiles
-    const { data, error } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', user.id)
-      .single();
-
-    renderProfileForm(data || {});
-  }
-
-  function renderProfileForm(profile = {}) {
+  // --- ФУНКЦИИ ---
+  function renderProfileForm(email, profile) {
     const avatar = profile.avatar || 'dog.png';
     const nickname = profile.nickname || '';
     const birthDate = profile.birth_date ? profile.birth_date.split('T')[0] : '';
@@ -229,6 +210,9 @@
     const description = profile.description || '';
 
     const html = `
+      <h2 style="text-align:center;color:#0b3d91;margin-top:0;">Добро пожаловать!</h2>
+      <p style="text-align:center;color:#555;margin-bottom:1.5rem;">${email}</p>
+
       <div class="avatar-preview">
         <div class="avatar-option ${avatar === 'dog.png' ? 'selected' : ''}" data-avatar="dog.png">
           <img src="img/dog.png" alt="Собака">
@@ -266,10 +250,10 @@
           <textarea id="description" placeholder="Расскажите немного о себе...">${description}</textarea>
         </div>
 
-        <button type="submit" class="save-btn" id="saveBtn">Сохранить профиль</button>
+        <button type="submit" class="save-btn">Сохранить профиль</button>
       </form>
 
-      <button class="logout-btn" id="logoutBtn">Выйти</button>
+      <button class="logout-btn">Выйти</button>
       <a href="index.html" class="back-link">← Вернуться на главную</a>
     `;
 
@@ -284,43 +268,36 @@
     });
 
     document.getElementById('profileForm').addEventListener('submit', saveProfile);
-    document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+    document.querySelector('.logout-btn').addEventListener('click', handleLogout);
   }
 
   async function saveProfile(e) {
     e.preventDefault();
-    const saveBtn = document.getElementById('saveBtn');
-    saveBtn.disabled = true;
-    saveBtn.textContent = 'Сохранение…';
+    const user = (await supabase.auth.getUser()).data.user;
+    if (!user) return;
 
     const selectedAvatar = document.querySelector('.avatar-option.selected')?.dataset.avatar || 'dog.png';
     const nickname = document.getElementById('nickname').value.trim();
-    const birthDate = document.getElementById('birthDate').value;
-    const gender = document.getElementById('gender').value;
-    const description = document.getElementById('description').value.trim();
+    const birthDate = document.getElementById('birthDate').value || null;
+    const gender = document.getElementById('gender').value || null;
+    const description = document.getElementById('description').value.trim() || null;
 
-    try {
-      const { error } = await supabase
-        .from('profiles')
-        .upsert({
-          id: currentUser.id,
-          nickname,
-          birth_date: birthDate || null,
-          gender: gender || null,
-          description: description || null,
-          avatar: selectedAvatar,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+    const { error } = await supabase
+      .from('profiles')
+      .upsert({
+        id: user.id,
+        nickname,
+        birth_date: birthDate,
+        gender,
+        description,
+        avatar: selectedAvatar,
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
 
-      if (error) throw error;
-
-      alert('Профиль успешно сохранён!');
-    } catch (err) {
-      console.error('Ошибка сохранения:', err);
-      alert('Не удалось сохранить профиль. Попробуйте позже.');
-    } finally {
-      saveBtn.disabled = false;
-      saveBtn.textContent = 'Сохранить профиль';
+    if (error) {
+      alert('Ошибка сохранения: ' + error.message);
+    } else {
+      alert('Профиль сохранён!');
     }
   }
 
@@ -329,8 +306,36 @@
     window.location.href = 'index.html';
   }
 
+  async function loadProfile() {
+    const {  { user }, error } = await supabase.auth.getUser();
+
+    if (error || !user) {
+      window.location.href = 'vhod.html';
+      return;
+    }
+
+    const { data: profile, error: dbError } = await supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', user.id)
+      .single();
+
+    // Если профиль не найден — используем пустой объект
+    renderProfileForm(user.email, profile || {
+      avatar: 'dog.png',
+      nickname: '',
+      birth_date: null,
+      gender: '',
+      description: ''
+    });
+  }
+
   // Запуск
-  loadProfile().catch(console.error);
+  loadProfile().catch(err => {
+    console.error('Ошибка загрузки профиля:', err);
+    document.getElementById('profileContent').innerHTML = 
+      `<p style="color:#d32f2f;text-align:center;">Не удалось загрузить профиль.</p>`;
+  });
 </script>
 
 </body>
