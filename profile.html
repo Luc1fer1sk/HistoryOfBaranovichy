@@ -66,6 +66,21 @@
       object-fit: cover;
     }
 
+    .profile-avatar.golden-border {
+      border: 6px solid #FFD700;
+      box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+      animation: golden-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes golden-glow {
+      from {
+        box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
+      }
+      to {
+        box-shadow: 0 4px 20px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.5);
+      }
+    }
+
     .profile-name {
       font-size: 2rem;
       font-weight: 700;
@@ -369,9 +384,13 @@
     const safeEmail = escapeHtml(email);
     const safeDescription = description ? description.split('\n').map(line => escapeHtml(line)).join('<br>') : '';
 
+    // Проверяем, является ли пользователь VIP (золотая рамка)
+    const isVIP = email === 'deniskalol227228@yandex.ru';
+    const avatarClass = isVIP ? 'profile-avatar golden-border' : 'profile-avatar';
+
     const html = `
       <div class="profile-header">
-        <img src="img/${escapeHtml(avatar)}" alt="Аватар" class="profile-avatar">
+        <img src="img/${escapeHtml(avatar)}" alt="Аватар" class="${avatarClass}">
         <h1 class="profile-name">${safeNickname}</h1>
         <p class="profile-email">${safeEmail}</p>
       </div>
