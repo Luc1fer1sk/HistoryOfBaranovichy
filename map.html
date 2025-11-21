@@ -16,36 +16,34 @@
       padding: 0;
       background-color: #f5f7fa;
       color: #333;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
+      display: block; /* отключён flex, чтобы разрешить скролл */
     }
 
     header {
       background-color: #0b3d91;
       color: white;
       text-align: center;
-      padding: 1.2rem 1rem 0.6rem;
+      padding: 1rem 1rem 0.6rem;
       position: relative;
     }
 
     header img {
-      height: 70px;
-      margin-bottom: 0.8rem;
+      height: 60px;
+      margin-bottom: 0.6rem;
       border-radius: 8px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
 
     h1 {
       margin: 0;
-      font-size: 1.8rem;
+      font-size: 1.7rem;
     }
 
     .back-button {
       background-color: #0a2e70;
       color: white;
       text-decoration: none;
-      padding: 0.5rem 1rem;
+      padding: 0.45rem 1rem;
       border-radius: 6px;
       font-weight: 600;
       white-space: nowrap;
@@ -59,30 +57,31 @@
     }
 
     main {
-      flex: 1;
-      padding: 0 1rem 1rem;
-      display: flex;
-      flex-direction: column;
+      /* убран flex — теперь обычный блок с прокруткой */
+      padding: 1rem;
     }
 
     #map {
-      flex: 1;
-      display: block;
-      height: 750px;
+      width: 100%;
+      min-height: 1200px; /* ← основное изменение: большая карта */
+      max-width: 1000px;
+      margin: 0 auto;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
       background-color: #e0e0e0;
     }
 
     footer {
+      display: block;
       text-align: center;
       padding: 1.2rem;
       background-color: #eef2f7;
       color: #666;
       border-top: 1px solid #ddd;
+      margin-top: 1rem;
     }
 
-    /* Кастомный стиль popup'а */
+    /* Стили popup'а — без изменений */
     .leaflet-popup-content-wrapper {
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -134,19 +133,26 @@
 
     @media (max-width: 600px) {
       header {
-        padding: 1rem 1rem 0.5rem;
+        padding: 0.8rem 1rem 0.4rem;
+      }
+
+      header img {
+        height: 50px;
       }
 
       h1 {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
       }
 
       .back-button {
-        margin-top: 0.6rem;
+        padding: 0.4rem 0.8rem;
+        margin-top: 0.5rem;
       }
 
       #map {
-        height: 300px;
+        min-height: 90vh; /* на мобильных — почти весь экран, но с возможностью скролла */
+        max-width: 100%;
+        border-radius: 8px;
       }
 
       .leaflet-popup-content {
@@ -188,15 +194,12 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  // Центрируем карту на Барановичах
   const map = L.map('map').setView([53.1325, 25.9992], 14);
 
-  // Базовый слой OpenStreetMap
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  // Объекты: [название, широта, долгота, URL, изображение, адрес, описание]
   const places = [
     [
       "Барановичский технологический колледж",
@@ -227,16 +230,13 @@
     ]
   ];
 
-  // Добавляем маркеры
   places.forEach(place => {
     const [name, lat, lng, url, imgSrc, address, desc] = place;
-
     const marker = L.marker([lat, lng]).addTo(map);
 
-    // Создаём кастомный popup
     const popupContent = `
       <div class="leaflet-popup-content">
-        <img class="popup-image" src="${imgSrc}" alt="${name}">
+        <img class="popup-image" src="${imgSrc}" onerror="this.style.display='none'" alt="${name}">
         <div class="popup-info">
           <h3>${name}</h3>
           <p><strong>Адрес:</strong> ${address}</p>
@@ -246,22 +246,19 @@
     `;
 
     const popup = L.popup({
-      closeButton: false, // Убираем крестик закрытия
-      autoClose: false,   // Не закрывать при клике вне
-      closeOnClick: false // Не закрывать при клике на карте
+      closeButton: false,
+      autoClose: false,
+      closeOnClick: false
     }).setContent(popupContent);
 
-    // Показываем popup при наведении
-    marker.on('mouseover', function(e) {
+    marker.on('mouseover', function() {
       this.bindPopup(popup).openPopup();
     });
 
-    // Закрываем popup при уходе мыши
-    marker.on('mouseout', function(e) {
+    marker.on('mouseout', function() {
       this.closePopup();
     });
 
-    // Также можно добавить переход по клику
     marker.on('click', () => {
       window.open(url, '_blank');
     });
