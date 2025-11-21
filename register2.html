@@ -228,17 +228,49 @@
   const errorMessage = document.getElementById('errorMessage');
   const submitBtn = document.getElementById('submitBtn');
 
+  // Проверка сессии при загрузке страницы
+  async function checkSession() {
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    
+    if (authError || !user) {
+      console.error('Ошибка проверки сессии:', authError);
+      errorMessage.textContent = 'Вы не вошли в систему. Пожалуйста, сначала зарегистрируйтесь или войдите.';
+      errorMessage.style.display = 'block';
+      submitBtn.disabled = true;
+      
+      // Перенаправляем на регистрацию через 3 секунды
+      setTimeout(() => {
+        window.location.href = 'register.html';
+      }, 3000);
+      return false;
+    }
+    
+    console.log('Пользователь авторизован:', user.id);
+    return true;
+  }
+
+  // Проверяем сессию при загрузке
+  checkSession().catch(err => {
+    console.error('Ошибка при проверке сессии:', err);
+    errorMessage.textContent = 'Ошибка проверки авторизации. Попробуйте перезагрузить страницу.';
+    errorMessage.style.display = 'block';
+  });
+
   async function handleSubmit(e) {
     e.preventDefault();
 
     // ✅ ПРАВИЛЬНАЯ ДЕСТРУКТУРИЗАЦИЯ
-    const {  user, error: authError } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
 
     if (authError || !user) {
+      console.error('Ошибка получения пользователя:', authError);
       errorMessage.textContent = 'Вы не вошли в систему. Попробуйте зарегистрироваться заново.';
       errorMessage.style.display = 'block';
+      submitBtn.disabled = false;
       return;
     }
+
+    console.log('Сохранение профиля для пользователя:', user.id);
 
     const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
     const nickname = document.getElementById('nickname').value.trim();
@@ -252,23 +284,28 @@
     submitBtn.textContent = 'Сохранение…';
 
     try {
-      const { error: dbError } = await supabase
+      const profileData = {
+        id: user.id,
+        nickname: nickname,
+        birth_date: birthDate,
+        gender: gender,
+        description: description,
+        avatar: selectedAvatar,
+        updated_at: new Date().toISOString()
+      };
+
+      console.log('Отправка данных профиля:', profileData);
+
+      const { data, error: dbError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id, // ✅ user.id — валидный UUID
-          nickname: nickname,
-          birth_date: birthDate,
-          gender: gender,
-          description: description,
-          avatar: selectedAvatar,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'id' });
+        .upsert(profileData, { onConflict: 'id' });
 
       if (dbError) {
         console.error('Ошибка БД:', dbError);
         throw dbError;
       }
 
+      console.log('Профиль успешно сохранен:', data);
       window.location.href = 'profile.html';
 
     } catch (err) {

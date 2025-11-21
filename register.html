@@ -212,32 +212,54 @@
     submitBtn.disabled = true;
 
     try {
-  const { data, error } = await supabase.auth.signUp({
-    email: email,
-    password: password
-  });
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: email,
+        password: password
+      });
 
-  if (error) throw error;
+      if (signUpError) throw signUpError;
 
-  // 🔑 АВТОМАТИЧЕСКИ ВХОДИМ ПОСЛЕ РЕГИСТРАЦИИ
-  const { error: signInError } = await supabase.auth.signInWithPassword({
-    email: email,
-    password: password
-  });
+      // 🔑 АВТОМАТИЧЕСКИ ВХОДИМ ПОСЛЕ РЕГИСТРАЦИИ
+      const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
+      });
 
-  if (signInError) {
-    console.warn('Не удалось войти автоматически:', signInError);
-    // Но всё равно переходим — возможно, сессия уже есть
-  }
+      if (signInError) {
+        console.error('Не удалось войти автоматически:', signInError);
+        throw signInError;
+      }
 
-  successMessage.style.display = 'block';
-  setTimeout(() => {
-    window.location.href = 'register2.html';
-  }, 1000);
+      // Проверяем, что пользователь действительно авторизован
+      if (!signInData.user) {
+        throw new Error('Не удалось получить данные пользователя после входа');
+      }
 
-} catch (err) {
-  // ...
-}
+      console.log('Пользователь успешно авторизован:', signInData.user.id);
+
+      // Ждем немного, чтобы сессия успела установиться в localStorage
+      await new Promise(resolve => setTimeout(resolve, 800));
+
+      // Дополнительная проверка сессии перед переходом
+      const { data: { user: verifyUser }, error: verifyError } = await supabase.auth.getUser();
+      
+      if (verifyError || !verifyUser) {
+        console.error('Ошибка проверки сессии:', verifyError);
+        throw new Error('Сессия не установлена. Попробуйте войти вручную.');
+      }
+
+      console.log('Сессия подтверждена. Переход на register2.html');
+      successMessage.style.display = 'block';
+      setTimeout(() => {
+        window.location.href = 'register2.html';
+      }, 1000);
+
+    } catch (err) {
+      console.error('Ошибка регистрации:', err);
+      errorMessage.textContent = err.message || 'Не удалось зарегистрироваться. Проверьте данные.';
+      errorMessage.style.display = 'block';
+      submitBtn.disabled = false;
+    }
   });
 </script>
 
