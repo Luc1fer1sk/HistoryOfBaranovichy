@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Регистрация — Мой дом - история</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
-  <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
@@ -160,24 +159,24 @@
 <main>
   <div class="form-container">
     <h2>Создайте аккаунт</h2>
-   <form id="registerForm">
-  <div class="form-group">
-    <label for="email">Электронная почта</label>
-    <input type="email" id="email" required autocomplete="email">
-  </div>
-  <div class="form-group">
-    <label for="password">Пароль</label>
-    <input type="password" id="password" required minlength="6" autocomplete="new-password">
-  </div>
-  <button type="submit" id="submitBtn">Зарегистрироваться</button>
-</form>
+    <form id="registerForm">
+      <div class="form-group">
+        <label for="email">Электронная почта</label>
+        <input type="email" id="email" required autocomplete="email">
+      </div>
+      <div class="form-group">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" id="submitBtn">Зарегистрироваться</button>
+    </form>
 
-<!-- НОВАЯ КНОПКА-ССЫЛКА -->
-<div style="text-align: center; margin-top: 1rem;">
-  <a href="vhod.html" class="back-link">Уже есть аккаунт? Войти.</a>
-</div>
+    <div style="text-align: center; margin-top: 1rem;">
+      <a href="vhod.html" class="back-link">Уже есть аккаунт? Войти.</a>
+    </div>
+
     <div id="errorMessage" class="error"></div>
-    <div id="successMessage" class="success">Регистрация успешна! Переход в профиль...</div>
+    <div id="successMessage" class="success">Регистрация успешна! Переход...</div>
 
     <a href="index.html" class="back-link">← Вернуться на главную</a>
   </div>
@@ -188,6 +187,7 @@
 </footer>
 
 <script>
+  // === ТОЛЬКО РЕГИСТРАЦИЯ — БЕЗ ПРОФИЛЯ ===
   const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
   const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
@@ -208,6 +208,7 @@
     submitBtn.disabled = true;
 
     try {
+      // Только регистрация — без касания profiles!
       const { data, error } = await supabase.auth.signUp({
         email: email,
         password: password
@@ -215,14 +216,15 @@
 
       if (error) throw error;
 
+      // Успех → сразу на register2.html
       successMessage.style.display = 'block';
       setTimeout(() => {
-        window.location.href = 'register2.html'; // ← важно: не profile.html!
-      }, 1500);
+        window.location.href = 'register2.html';
+      }, 1000);
 
     } catch (err) {
       console.error('Ошибка регистрации:', err);
-      errorMessage.textContent = err.message || 'Неизвестная ошибка при регистрации.';
+      errorMessage.textContent = err.message || 'Неизвестная ошибка.';
       errorMessage.style.display = 'block';
     } finally {
       submitBtn.disabled = false;
