@@ -212,27 +212,32 @@
     submitBtn.disabled = true;
 
     try {
-      // Только регистрация — без касания profiles!
-      const { data, error } = await supabase.auth.signUp({
-        email: email,
-        password: password
-      });
+  const { data, error } = await supabase.auth.signUp({
+    email: email,
+    password: password
+  });
 
-      if (error) throw error;
+  if (error) throw error;
 
-      // Успех → сразу на register2.html
-      successMessage.style.display = 'block';
-      setTimeout(() => {
-        window.location.href = 'register2.html';
-      }, 1000);
+  // 🔑 АВТОМАТИЧЕСКИ ВХОДИМ ПОСЛЕ РЕГИСТРАЦИИ
+  const { error: signInError } = await supabase.auth.signInWithPassword({
+    email: email,
+    password: password
+  });
 
-    } catch (err) {
-      console.error('Ошибка регистрации:', err);
-      errorMessage.textContent = err.message || 'Неизвестная ошибка.';
-      errorMessage.style.display = 'block';
-    } finally {
-      submitBtn.disabled = false;
-    }
+  if (signInError) {
+    console.warn('Не удалось войти автоматически:', signInError);
+    // Но всё равно переходим — возможно, сессия уже есть
+  }
+
+  successMessage.style.display = 'block';
+  setTimeout(() => {
+    window.location.href = 'register2.html';
+  }, 1000);
+
+} catch (err) {
+  // ...
+}
   });
 </script>
 
