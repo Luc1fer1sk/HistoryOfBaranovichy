@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Мой дом - история</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -14,7 +16,7 @@
       color: #333;
       display: flex;
       flex-direction: column;
-      min-height: 100vh; /* Занимает минимум всю высоту экрана */
+      min-height: 100vh;
     }
 
     header {
@@ -22,6 +24,30 @@
       color: white;
       text-align: center;
       padding: 2rem 1rem;
+      position: relative; /* Для позиционирования иконки */
+    }
+
+    /* Иконка профиля */
+    .profile-icon {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b3d91;
+      font-weight: bold;
+      text-decoration: none;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: transform 0.2s;
+    }
+
+    .profile-icon:hover {
+      transform: scale(1.1);
     }
 
     header img {
@@ -37,7 +63,7 @@
     }
 
     main {
-      flex: 1; /* Растягивается, чтобы footer прилипал к низу */
+      flex: 1;
     }
 
     .menu-container {
@@ -82,6 +108,14 @@
     }
 
     @media (max-width: 600px) {
+      .profile-icon {
+        top: 0.8rem;
+        right: 0.8rem;
+        width: 36px;
+        height: 36px;
+        font-size: 0.9rem;
+      }
+
       .menu-item a {
         font-size: 1.1rem;
       }
@@ -95,6 +129,9 @@
 <body>
 
 <header>
+  <!-- Иконка профиля (пока без href — зададим через JS) -->
+  <a href="#" id="profileLink" class="profile-icon" aria-label="Профиль">👤</a>
+
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
   <h1>Мой дом - история</h1>
   <p>Выберите раздел для просмотра</p>
@@ -117,8 +154,31 @@
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
 
+<script>
+  // === Настройте здесь ваши данные Supabase ===
+  const supabaseUrl = 'https://ВАШ-ПРОЕКТ.supabase.co'; // ← ЗАМЕНИТЕ!
+  const supabaseAnonKey = 'ваш-anon-public-key';        // ← ЗАМЕНИТЕ!
+
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey);
+
+  const profileLink = document.getElementById('profileLink');
+
+  // Проверяем, авторизован ли пользователь
+  async function checkAuth() {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (user) {
+      // Пользователь авторизован → ведём в профиль
+      profileLink.href = 'profile.html';
+    } else {
+      // Не авторизован → ведём на регистрацию
+      profileLink.href = 'register.html';
+    }
+  }
+
+  // Запускаем проверку при загрузке
+  checkAuth().catch(console.error);
+</script>
+
 </body>
 </html>
-
-
-
