@@ -6,9 +6,6 @@
   <title>Мой дом - история (Карта)</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
 
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -45,15 +42,55 @@
       padding: 1rem;
       display: flex;
       flex-direction: column;
+      align-items: center;
     }
 
-    #map {
-      flex: 1;
-      height: 500px;
+    .map-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: 1rem auto;
       border-radius: 10px;
+      overflow: hidden;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-top: 1rem;
-      background-color: #e0e0e0;
+    }
+
+    .map-image {
+      width: 100%;
+      display: block;
+    }
+
+    .marker {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-color: #e74c3c;
+      border: 2px solid white;
+      border-radius: 50%;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
+    }
+
+    .marker:hover {
+      transform: translate(-50%, -50%) scale(1.3);
+      z-index: 10;
+    }
+    
+    .back-button {
+      background-color: #0a2e70;
+      color: white;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: background-color 0.2s;
+      align-self: flex-start;
+    }
+    .back-button:hover {
+      background-color: #082355;
     }
 
     footer {
@@ -69,59 +106,83 @@
         font-size: 1.5rem;
       }
 
-      #map {
-        height: 300px;
+      .marker {
+        width: 20px;
+        height: 20px;
       }
     }
   </style>
 </head>
 <body>
-
+  <a href="index.html" class="back-button">Главная</a>
 <header>
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
   <h1>Исторические места Барановичей</h1>
-  <p>Кликните по маркеру, чтобы перейти к описанию</p>
+  <p>Кликните по значку на карте</p>
 </header>
 
 <main>
-  <div id="map"></div>
+  <div class="map-container" id="mapContainer">
+    <!-- Статическая карта из OpenStreetMap -->
+    <img 
+      id="mapImage" 
+      class="map-image" 
+      src="https://www.openstreetmap.org/staticmap?center=53.1325,25.9992&zoom=14&size=800x500&markers=53.1325,25.9992"
+      alt="Карта Барановичей"
+    >
+    <!-- Маркеры будут добавлены сюда скриптом -->
+  </div>
 </main>
 
 <footer>
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
 
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-
 <script>
-  // Центрируем карту на Барановичах (координаты можно уточнить)
-  const map = L.map('map').setView([53.1325, 25.9992], 14);
-
-  // Базовый слой OpenStreetMap
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-  }).addTo(map);
-
-  // Примеры объектов: [название, широта, долгота, URL]
+  // Данные объектов: [название (необяз.), широта, долгота, URL]
   const places = [
-    ["Железнодорожный вокзал", 53.1318, 26.0030, "https://example.com/vokzal"],
-    ["Парк культуры и отдыха", 53.1350, 25.9970, "https://example.com/park"],
-    ["Свято-Покровский храм", 53.1290, 26.0050, "https://example.com/hram"]
+    ["Ж/д вокзал", 53.1318, 26.0030, "https://example.com/vokzal"],
+    ["Парк", 53.1350, 25.9970, "https://example.com/park"],
+    ["Храм", 53.1290, 26.0050, "https://example.com/hram"]
   ];
 
-  // Добавляем маркеры
+  // Параметры карты
+  const centerLat = 53.1325;
+  const centerLng = 25.9992;
+  const zoom = 14;
+  const mapWidth = 800;
+  const mapHeight = 500;
+
+  // Преобразуем координаты в пиксели относительно центра
+  function latLngToPixel(lat, lng) {
+    const earthCircumference = 40075016.686; // в метрах на экваторе
+    const metersPerPixel = earthCircumference * Math.cos(centerLat * Math.PI / 180) / Math.pow(2, zoom + 8);
+    
+    const dx = (lng - centerLng) * (earthCircumference * Math.cos(centerLat * Math.PI / 180) / 360);
+    const dy = (lat - centerLat) * (earthCircumference / 360);
+
+    const px = mapWidth / 2 + dx / metersPerPixel;
+    const py = mapHeight / 2 - dy / metersPerPixel; // y инвертирован
+
+    return { x: px, y: py };
+  }
+
+  // Создаём маркеры
+  const container = document.getElementById('mapContainer');
   places.forEach(place => {
     const [name, lat, lng, url] = place;
-    const marker = L.marker([lat, lng]).addTo(map);
-    
-    // При клике по маркеру — переход по ссылке
-    marker.on('click', () => {
-      window.open(url, '_blank'); // или location.href = url — если без новой вкладки
+    const pos = latLngToPixel(lat, lng);
+
+    const marker = document.createElement('div');
+    marker.className = 'marker';
+    marker.title = name;
+    marker.style.left = pos.x + 'px';
+    marker.style.top = pos.y + 'px';
+    marker.addEventListener('click', () => {
+      window.open(url, '_blank');
     });
 
-    // Опционально: всплывающая подсказка
-    marker.bindPopup(`<b>${name}</b><br><a href="${url}" target="_blank">Подробнее</a>`);
+    container.appendChild(marker);
   });
 </script>
 
