@@ -25,7 +25,7 @@
       background-color: #0b3d91;
       color: white;
       text-align: center;
-      padding: 1.5rem 1rem;
+      padding: 1.2rem 1rem 0.6rem; /* уменьшен нижний отступ */
       position: relative;
     }
 
@@ -51,7 +51,7 @@
       white-space: nowrap;
       transition: background-color 0.2s;
       display: inline-block;
-      margin-top: 0.8rem;
+      margin-top: 0.6rem;
     }
 
     .back-button:hover {
@@ -60,19 +60,19 @@
 
     main {
       flex: 1;
-      padding: 1rem;
+      padding: 0 1rem 1rem; /* убран верхний отступ */
       display: flex;
       flex-direction: column;
     }
 
     #map {
       flex: 1;
-      display:block;
+      display: block;
       height: 750px;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      margin-top: 1rem;
       background-color: #e0e0e0;
+      /* margin-top убран — карта прижата вверх */
     }
 
     footer {
@@ -84,16 +84,20 @@
     }
 
     @media (max-width: 600px) {
+      header {
+        padding: 1rem 1rem 0.5rem;
+      }
+
       h1 {
         font-size: 1.5rem;
       }
 
-      #map {
-        height: 300px;
+      .back-button {
+        margin-top: 0.6rem;
       }
 
-      .back-button {
-        margin-top: 0.8rem;
+      #map {
+        height: 300px;
       }
     }
   </style>
@@ -119,7 +123,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
-  // Центрируем карту на Барановичах (координаты можно уточнить)
+  // Центрируем карту на Барановичах
   const map = L.map('map').setView([53.1325, 25.9992], 14);
 
   // Базовый слой OpenStreetMap
@@ -127,7 +131,7 @@
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  // Примеры объектов: [название, широта, долгота, URL]
+  // Объекты: [название, широта, долгота, URL]
   const places = [
     ["Барановичский технологический колледж", 53.1328, 26.0217, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BTK.html"],
     ["Городской исполнительный комитет", 53.1317, 26.0182, "https://luc1fer1sk.github.io/HistoryOfBaranovichy/GIK.html"],
@@ -139,12 +143,10 @@
     const [name, lat, lng, url] = place;
     const marker = L.marker([lat, lng]).addTo(map);
     
-    // При клике по маркеру — переход по ссылке
     marker.on('click', () => {
-      window.open(url, '_blank'); // или location.href = url — если без новой вкладки
+      window.open(url, '_blank');
     });
 
-    // Опционально: всплывающая подсказка
     marker.bindPopup(`<b>${name}</b><br><a href="${url}" target="_blank">Подробнее</a>`);
   });
 </script>
