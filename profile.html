@@ -388,6 +388,10 @@
     const isVIP = email === 'deniskalol227228@yandex.ru';
     const avatarClass = isVIP ? 'profile-avatar golden-border' : 'profile-avatar';
 
+// Проверяем, является ли пользователь VIP (золотая рамка)
+    const isVIP = email === 'ruslankartuzov722@gmail.com';
+    const avatarClass = isVIP ? 'profile-avatar golden-border' : 'profile-avatar';
+
     const html = `
       <div class="profile-header">
         <img src="img/${escapeHtml(avatar)}" alt="Аватар" class="${avatarClass}">
