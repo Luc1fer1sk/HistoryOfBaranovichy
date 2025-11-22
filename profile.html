@@ -398,13 +398,13 @@
     const safeEmail = escapeHtml(email);
     const safeDescription = description ? description.split('\n').map(line => escapeHtml(line)).join('<br>') : '';
 
-    // Проверяем, является ли пользователь VIP (золотая рамка)
-    const isVIP = email === 'deniskalol227228@yandex.ru';
-    const avatarClass = isVIP ? 'profile-avatar golden-border' : 'profile-avatar';
+    //let avatarClass = 'profile-avatar';
 
-// Проверяем, является ли пользователь VIP (золотая рамка)
-    const isVIP = email === 'ruslankartuzov722@gmail.com';
-    const avatarClass = isVIP ? 'profile-avatar green-border' : 'profile-avatar';
+if (email === 'deniskalol227228@yandex.ru') {
+  avatarClass = 'profile-avatar golden-border';
+} else if (email === 'ruslankartuzov722@gmail.com') {
+  avatarClass = 'profile-avatar green-border';
+}
 
     const html = `
       <div class="profile-header">
