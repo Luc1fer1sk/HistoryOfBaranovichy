@@ -326,19 +326,6 @@
   </style>
 </head>
 <body>
-  <!-- Экран загрузки -->
-  <div class="page-loader" id="pageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0b3d91 0%, #0066cc 100%); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease-out;">
-    <div style="text-align: center; color: white;">
-      <div style="width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
-      <div style="font-size: 1.2rem; font-weight: 600; animation: pulse 1.5s ease-in-out infinite;">Загрузка...</div>
-    </div>
-  </div>
-  <style>
-    .page-loader.hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-  </style>
 
 <header>
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
@@ -455,19 +442,6 @@
       resultDiv.style.display = 'block';
     }
   }
-
-  // Экран загрузки
-  window.addEventListener('load', function() {
-    const loader = document.getElementById('pageLoader');
-    if (loader) {
-      setTimeout(() => {
-        loader.classList.add('hidden');
-        setTimeout(() => {
-          loader.style.display = 'none';
-        }, 500);
-      }, 800);
-    }
-  });
 
   // Плавные переходы при клике на ссылки
   document.querySelectorAll('a[href]').forEach(link => {
