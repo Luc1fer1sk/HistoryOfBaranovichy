@@ -8,23 +8,131 @@
   <!-- Supabase SDK -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
+    /* Анимация загрузки страницы */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes shimmer {
+      0% {
+        background-position: -1000px 0;
+      }
+      100% {
+        background-position: 1000px 0;
+      }
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0px);
+      }
+      50% {
+        transform: translateY(-10px);
+      }
+    }
+
+    @keyframes gradientShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.7;
+      }
+    }
+
+    /* Анимированный фон */
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f5f7fa;
+      background: linear-gradient(-45deg, #f5f7fa, #e8ecf1, #f0f4f8, #f5f7fa);
+      background-size: 400% 400%;
       color: #333;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-in-out forwards, gradientShift 15s ease infinite;
+      overflow-x: hidden;
+    }
+
+    /* Декоративные частицы */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(11, 61, 145, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(11, 61, 145, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     header {
-      background-color: #0b3d91;
+      background: linear-gradient(135deg, #0b3d91 0%, #0066cc 50%, #0b3d91 100%);
+      background-size: 200% 200%;
       color: white;
       text-align: center;
       padding: 2rem 1rem;
-      position: relative; /* Для позиционирования иконки */
+      position: relative;
+      opacity: 0;
+      animation: slideDown 1s ease-out 0.3s forwards, gradientShift 8s ease infinite;
+      box-shadow: 0 4px 20px rgba(11, 61, 145, 0.3);
+      z-index: 1;
     }
 
     /* Иконка профиля */
@@ -41,11 +149,13 @@
       font-weight: bold;
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-      transition: transform 0.2s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       overflow: hidden;
       border: 2px solid white;
       text-align: center;
       line-height: 60px;
+      opacity: 0;
+      animation: scaleIn 0.6s ease-out 0.5s forwards;
     }
 
     .profile-icon img {
@@ -64,8 +174,9 @@
     }
 
     .profile-icon:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transform: scale(1.15) rotate(5deg);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      animation: pulse 1s ease-in-out infinite;
     }
 
     header img {
@@ -73,11 +184,28 @@
       margin-bottom: 1rem;
       border-radius: 8px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+      opacity: 0;
+      animation: scaleIn 0.8s ease-out 0.6s forwards;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05) rotate(2deg);
     }
 
     h1 {
       margin: 0;
       font-size: 2rem;
+      opacity: 0;
+      animation: slideUp 0.8s ease-out 0.8s forwards;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      position: relative;
+    }
+
+    header p {
+      opacity: 0;
+      animation: slideUp 0.8s ease-out 1s forwards;
+      margin-top: 0.5rem;
     }
 
     main {
@@ -88,6 +216,8 @@
       max-width: 800px;
       margin: 3rem auto;
       padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
     }
 
     .menu-item {
@@ -96,13 +226,45 @@
       padding: 1.2rem;
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       text-align: center;
+      opacity: 0;
+      transform: translateY(30px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .menu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(11, 61, 145, 0.1), transparent);
+      transition: left 0.5s;
+    }
+
+    .menu-item:hover::before {
+      left: 100%;
+    }
+
+    .menu-item:nth-child(1) {
+      animation: slideUp 0.8s ease-out 1.2s forwards;
+    }
+
+    .menu-item:nth-child(2) {
+      animation: slideUp 0.8s ease-out 1.4s forwards;
+    }
+
+    .menu-item:nth-child(3) {
+      animation: slideUp 0.8s ease-out 1.6s forwards;
     }
 
     .menu-item:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 8px 25px rgba(11, 61, 145, 0.25);
+      border-left: 4px solid #0b3d91;
     }
 
     .menu-item a {
@@ -111,18 +273,59 @@
       font-size: 1.3rem;
       font-weight: 600;
       display: block;
+      position: relative;
+      transition: color 0.3s ease, transform 0.3s ease;
     }
 
     .menu-item a:hover {
       color: #0066cc;
+      transform: translateX(5px);
+    }
+
+    .menu-item a::after {
+      content: '→';
+      position: absolute;
+      right: 0;
+      opacity: 0;
+      transform: translateX(-10px);
+      transition: all 0.3s ease;
+    }
+
+    .menu-item:hover a::after {
+      opacity: 1;
+      transform: translateX(0);
     }
 
     footer {
       text-align: center;
       padding: 1.5rem;
-      background-color: #eef2f7;
+      background: linear-gradient(180deg, #eef2f7 0%, #e0e6ed 100%);
       color: #666;
       border-top: 1px solid #ddd;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 1.8s forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer p {
+      margin: 0;
+      transition: transform 0.3s ease;
+    }
+
+    footer:hover p {
+      transform: scale(1.05);
+    }
+
+    /* Плавные переходы для всех интерактивных элементов */
+    * {
+      transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Анимация появления для основного контента */
+    main {
+      opacity: 0;
+      animation: fadeIn 1s ease-out 1s forwards;
     }
 
     @media (max-width: 600px) {
@@ -138,13 +341,92 @@
         font-size: 1.1rem;
       }
 
+      .menu-item a::after {
+        display: none;
+      }
+
       h1 {
         font-size: 1.6rem;
       }
+
+      .menu-item {
+        margin-bottom: 1rem;
+        padding: 1rem;
+      }
+    }
+
+    /* Дополнительные эффекты для улучшения UX */
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* Плавная прокрутка */
+    html {
+      scroll-behavior: smooth;
+    }
+    /* Экран загрузки */
+    .page-loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #0b3d91 0%, #0066cc 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      opacity: 1;
+      transition: opacity 0.5s ease-out;
+    }
+
+    .page-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .loader-content {
+      text-align: center;
+      color: white;
+    }
+
+    .loader-spinner {
+      width: 60px;
+      height: 60px;
+      border: 4px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loader-text {
+      font-size: 1.2rem;
+      font-weight: 600;
+      animation: pulse 1.5s ease-in-out infinite;
     }
   </style>
 </head>
 <body>
+  <!-- Экран загрузки -->
+  <div class="page-loader" id="pageLoader">
+    <div class="loader-content">
+      <div class="loader-spinner"></div>
+      <div class="loader-text">Загрузка...</div>
+    </div>
+  </div>
 
 <header>
   <!-- Иконка профиля (пока без href — зададим через JS) -->
@@ -241,6 +523,108 @@
 
   // Запускаем проверку при загрузке
   checkAuth().catch(console.error);
+
+  // Скрываем экран загрузки после загрузки страницы
+  window.addEventListener('load', function() {
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 500);
+      }, 800);
+    }
+  });
+
+  // Дополнительные анимации и эффекты
+  document.addEventListener('DOMContentLoaded', function() {
+    // Добавляем эффект ripple при клике на элементы меню
+    const menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(item => {
+      item.addEventListener('click', function(e) {
+        const ripple = document.createElement('span');
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = x + 'px';
+        ripple.style.top = y + 'px';
+        ripple.classList.add('ripple');
+        
+        this.appendChild(ripple);
+        
+        setTimeout(() => {
+          ripple.remove();
+        }, 600);
+      });
+    });
+
+    // Плавные переходы при клике на ссылки
+    const links = document.querySelectorAll('a[href]');
+    links.forEach(link => {
+      if (link.hostname === window.location.hostname || !link.hostname) {
+        link.addEventListener('click', function(e) {
+          const href = this.getAttribute('href');
+          if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+            e.preventDefault();
+            document.body.style.opacity = '0';
+            document.body.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+              window.location.href = href;
+            }, 300);
+          }
+        });
+      }
+    });
+
+    // Добавляем эффект параллакса для header при прокрутке
+    window.addEventListener('scroll', function() {
+      const currentScroll = window.pageYOffset;
+      const header = document.querySelector('header');
+      if (header && currentScroll > 50) {
+        header.style.transform = `translateY(${Math.min(currentScroll * 0.3, 50)}px)`;
+        header.style.opacity = Math.max(0.85, 1 - currentScroll / 400);
+      } else if (header) {
+        header.style.transform = 'translateY(0)';
+        header.style.opacity = '1';
+      }
+    });
+
+    // Анимация при наведении на иконку профиля
+    const profileIcon = document.getElementById('profileLink');
+    if (profileIcon) {
+      profileIcon.addEventListener('mouseenter', function() {
+        this.style.animation = 'float 2s ease-in-out infinite';
+      });
+      profileIcon.addEventListener('mouseleave', function() {
+        this.style.animation = '';
+      });
+    }
+  });
+
+  // Добавляем стили для ripple эффекта
+  const style = document.createElement('style');
+  style.textContent = `
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(11, 61, 145, 0.3);
+      transform: scale(0);
+      animation: ripple-animation 0.6s ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes ripple-animation {
+      to {
+        transform: scale(4);
+        opacity: 0;
+      }
+    }
+  `;
+  document.head.appendChild(style);
 </script>
 
 </body>
