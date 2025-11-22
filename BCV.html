@@ -6,23 +6,102 @@
   <title>Барановичский полесский железнодорожный вокзал</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
   <style>
+    /* Анимации */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes scaleIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       line-height: 1.6;
       margin: 0;
       padding: 0;
-      background-color: #f9f9f9;
+      background: linear-gradient(-45deg, #f5f7fa, #e8ecf1, #f0f4f8, #f5f7fa);
+      background-size: 400% 400%;
       color: #333;
+      opacity: 0;
+      animation: fadeIn 0.8s ease-in-out forwards, gradientShift 15s ease infinite;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: 
+        radial-gradient(circle at 20% 50%, rgba(11, 61, 145, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(0, 102, 204, 0.05) 0%, transparent 50%),
+        radial-gradient(circle at 40% 20%, rgba(11, 61, 145, 0.03) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: 0;
     }
 
     header {
-      background-color: #0b3d91;
+      background: linear-gradient(135deg, #0b3d91 0%, #0066cc 50%, #0b3d91 100%);
+      background-size: 200% 200%;
       color: white;
       padding: 1.5rem 1rem;
       display: flex;
       align-items: center;
       gap: 1.5rem;
       flex-wrap: wrap;
+      opacity: 0;
+      animation: slideDown 1s ease-out 0.3s forwards, gradientShift 8s ease infinite;
+      box-shadow: 0 4px 20px rgba(11, 61, 145, 0.3);
+      z-index: 1;
+      position: relative;
     }
 
     header img {
@@ -30,22 +109,36 @@
       width: auto;
       border-radius: 6px;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+      opacity: 0;
+      animation: scaleIn 0.8s ease-out 0.6s forwards;
+      transition: transform 0.3s ease;
+    }
+
+    header img:hover {
+      transform: scale(1.05) rotate(2deg);
     }
 
     header .text {
       flex: 1;
       min-width: 250px;
+      opacity: 0;
+      animation: slideUp 0.8s ease-out 0.8s forwards;
     }
 
     h1 {
       margin: 0;
       font-size: 1.8rem;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
     .container {
       max-width: 900px;
       margin: 2rem auto;
       padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 1.2s forwards;
     }
 
     h2 {
@@ -71,11 +164,21 @@
       height: auto;
       border-radius: 8px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      opacity: 0;
+      transform: translateY(20px);
     }
 
+    .gallery img:nth-child(1) { animation: slideUp 0.6s ease-out 1.4s forwards; }
+    .gallery img:nth-child(2) { animation: slideUp 0.6s ease-out 1.5s forwards; }
+    .gallery img:nth-child(3) { animation: slideUp 0.6s ease-out 1.6s forwards; }
+    .gallery img:nth-child(4) { animation: slideUp 0.6s ease-out 1.7s forwards; }
+    .gallery img:nth-child(5) { animation: slideUp 0.6s ease-out 1.8s forwards; }
+    .gallery img:nth-child(6) { animation: slideUp 0.6s ease-out 1.9s forwards; }
+
     .gallery img:hover {
-      transform: scale(1.03);
+      transform: scale(1.08) translateY(-5px);
+      box-shadow: 0 8px 25px rgba(11, 61, 145, 0.25);
     }
 
     /* Стили для блока отзывов */
@@ -127,10 +230,27 @@
     footer {
       text-align: center;
       padding: 1.5rem;
-      background-color: #eef2f7;
+      background: linear-gradient(180deg, #eef2f7 0%, #e0e6ed 100%);
       color: #666;
       margin-top: 0;
       border-top: 1px solid #ddd;
+      opacity: 0;
+      animation: fadeIn 1s ease-out 2s forwards;
+      position: relative;
+      z-index: 1;
+    }
+
+    footer p {
+      margin: 0;
+      transition: transform 0.3s ease;
+    }
+
+    footer:hover p {
+      transform: scale(1.05);
+    }
+
+    html {
+      scroll-behavior: smooth;
     }
 
     /* Кнопка "Главная" */
@@ -142,12 +262,16 @@
       border-radius: 6px;
       font-weight: 600;
       white-space: nowrap;
-      transition: background-color 0.2s;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       align-self: flex-start;
+      opacity: 0;
+      animation: scaleIn 0.6s ease-out 1.1s forwards;
     }
 
     .back-button:hover {
       background-color: #082355;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     }
 
     @media (max-width: 600px) {
@@ -182,6 +306,19 @@
   </style>
 </head>
 <body>
+  <!-- Экран загрузки -->
+  <div class="page-loader" id="pageLoader" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #0b3d91 0%, #0066cc 100%); display: flex; justify-content: center; align-items: center; z-index: 9999; opacity: 1; transition: opacity 0.5s ease-out;">
+    <div style="text-align: center; color: white;">
+      <div style="width: 60px; height: 60px; border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 1rem;"></div>
+      <div style="font-size: 1.2rem; font-weight: 600; animation: pulse 1.5s ease-in-out infinite;">Загрузка...</div>
+    </div>
+  </div>
+  <style>
+    .page-loader.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+  </style>
 
 <header>
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Герб Барановичей">
@@ -228,6 +365,38 @@
 <footer>
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
+
+<script>
+  // Экран загрузки
+  window.addEventListener('load', function() {
+    const loader = document.getElementById('pageLoader');
+    if (loader) {
+      setTimeout(() => {
+        loader.classList.add('hidden');
+        setTimeout(() => {
+          loader.style.display = 'none';
+        }, 500);
+      }, 800);
+    }
+  });
+
+  // Плавные переходы при клике на ссылки
+  document.querySelectorAll('a[href]').forEach(link => {
+    if (link.hostname === window.location.hostname || !link.hostname) {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          e.preventDefault();
+          document.body.style.opacity = '0';
+          document.body.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => {
+            window.location.href = href;
+          }, 300);
+        }
+      });
+    }
+  });
+</script>
 
 </body>
 
