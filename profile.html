@@ -71,6 +71,11 @@
       box-shadow: 0 4px 16px rgba(255, 215, 0, 0.5), 0 0 20px rgba(255, 215, 0, 0.3);
       animation: golden-glow 2s ease-in-out infinite alternate;
     }
+.profile-avatar.green-border {
+      border: 6px solid #FFD700;
+      box-shadow: 0 4px 16px rgba(0, 215, 0, 0.5), 0 0 20px rgba(0, 215, 0, 0.3);
+      animation: green-glow 2s ease-in-out infinite alternate;
+    }
 
     @keyframes golden-glow {
       from {
@@ -78,6 +83,15 @@
       }
       to {
         box-shadow: 0 4px 20px rgba(255, 215, 0, 0.7), 0 0 30px rgba(255, 215, 0, 0.5);
+      }
+    }
+
+@keyframes green-glow {
+      from {
+        box-shadow: 0 4px 16px rgba(0, 215, 0, 0.5), 0 0 20px rgba(0, 215, 0, 0.3);
+      }
+      to {
+        box-shadow: 0 4px 20px rgba(0, 215, 0, 0.7), 0 0 30px rgba(0, 215, 0, 0.5);
       }
     }
 
@@ -390,7 +404,7 @@
 
 // Проверяем, является ли пользователь VIP (золотая рамка)
     const isVIP = email === 'ruslankartuzov722@gmail.com';
-    const avatarClass = isVIP ? 'profile-avatar golden-border' : 'profile-avatar';
+    const avatarClass = isVIP ? 'profile-avatar green-border' : 'profile-avatar';
 
     const html = `
       <div class="profile-header">
