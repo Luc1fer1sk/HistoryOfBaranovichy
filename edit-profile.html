@@ -435,14 +435,23 @@
 
       // Предзаполняем форму данными из профиля
       if (profile) {
-        // Аватар
-        const avatar = profile.avatar || 'dog.png';
-        document.querySelectorAll('.avatar-option').forEach(option => {
-          option.classList.remove('selected');
-          if (option.dataset.avatar === avatar) {
-            option.classList.add('selected');
+        // Аватар - для highstairwayster@gmail.com скрываем выбор аватара
+        const email = user.email || '';
+        if (email === 'highstairwayster@gmail.com') {
+          // Скрываем выбор аватара для этого email
+          const avatarPreview = document.querySelector('.avatar-preview');
+          if (avatarPreview) {
+            avatarPreview.style.display = 'none';
           }
-        });
+        } else {
+          const avatar = profile.avatar || 'dog.png';
+          document.querySelectorAll('.avatar-option').forEach(option => {
+            option.classList.remove('selected');
+            if (option.dataset.avatar === avatar) {
+              option.classList.add('selected');
+            }
+          });
+        }
 
         // Никнейм
         document.getElementById('nickname').value = profile.nickname || '';
@@ -489,7 +498,11 @@
       return;
     }
 
-    const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
+    const email = user.email || '';
+    // Для highstairwayster@gmail.com принудительно используем tiger.jpg
+    const selectedAvatar = email === 'highstairwayster@gmail.com' 
+      ? 'tiger.jpg' 
+      : document.querySelector('.avatar-option.selected')?.dataset.avatar || 'dog.png';
     const nickname = document.getElementById('nickname').value.trim();
     const birthDateInput = document.getElementById('birthDate').value;
     const gender = document.getElementById('gender').value || null;

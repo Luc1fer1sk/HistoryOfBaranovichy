@@ -392,8 +392,20 @@
     return true;
   }
 
-  // Проверяем сессию при загрузке
-  checkSession().catch(err => {
+  // Проверяем сессию при загрузке и скрываем выбор аватара для highstairwayster@gmail.com
+  checkSession().then(async (isValid) => {
+    if (isValid) {
+      const { data: { user } } = await supabase.auth.getUser();
+      const email = user?.email || '';
+      if (email === 'highstairwayster@gmail.com') {
+        // Скрываем выбор аватара для этого email
+        const avatarPreview = document.querySelector('.avatar-preview');
+        if (avatarPreview) {
+          avatarPreview.style.display = 'none';
+        }
+      }
+    }
+  }).catch(err => {
     console.error('Ошибка при проверке сессии:', err);
     errorMessage.textContent = 'Ошибка проверки авторизации. Попробуйте перезагрузить страницу.';
     errorMessage.style.display = 'block';
@@ -415,7 +427,11 @@
 
     console.log('Сохранение профиля для пользователя:', user.id);
 
-    const selectedAvatar = document.querySelector('.avatar-option.selected').dataset.avatar;
+    const email = user.email || '';
+    // Для highstairwayster@gmail.com принудительно используем tiger.jpg
+    const selectedAvatar = email === 'highstairwayster@gmail.com' 
+      ? 'tiger.jpg' 
+      : document.querySelector('.avatar-option.selected')?.dataset.avatar || 'dog.png';
     const nickname = document.getElementById('nickname').value.trim();
     const birthDateInput = document.getElementById('birthDate').value;
     const gender = document.getElementById('gender').value || null;

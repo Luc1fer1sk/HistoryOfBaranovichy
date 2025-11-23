@@ -556,9 +556,10 @@
   }
 
   function renderProfile(user, profile) {
-    const avatar = profile?.avatar || 'dog.png';
-    const nickname = profile?.nickname || 'Пользователь';
     const email = user?.email || '';
+    // Для highstairwayster@gmail.com принудительно используем tiger.jpg
+    const avatar = email === 'highstairwayster@gmail.com' ? 'tiger.jpg' : (profile?.avatar || 'dog.png');
+    const nickname = profile?.nickname || 'Пользователь';
     const birthDate = profile?.birth_date || null;
     const gender = profile?.gender || '';
     const description = profile?.description || '';

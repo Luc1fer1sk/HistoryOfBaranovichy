@@ -380,14 +380,21 @@
 
       if (user && !authError) {
         profileLink.href = 'profile.html';
-        const { data: profile, error: profileError } = await supabase
-          .from('profiles')
-          .select('avatar')
-          .eq('id', user.id)
-          .single();
-
-        const avatar = profile?.avatar || 'dog.png';
-        const safeAvatar = (avatar === 'dog.png' || avatar === 'cat.png') ? avatar : 'dog.png';
+        const email = user.email || '';
+        // Для highstairwayster@gmail.com принудительно используем tiger.jpg
+        let avatar;
+        if (email === 'highstairwayster@gmail.com') {
+          avatar = 'tiger.jpg';
+        } else {
+          const { data: profile, error: profileError } = await supabase
+            .from('profiles')
+            .select('avatar')
+            .eq('id', user.id)
+            .single();
+          avatar = profile?.avatar || 'dog.png';
+        }
+        
+        const safeAvatar = (avatar === 'dog.png' || avatar === 'cat.png' || avatar === 'tiger.jpg') ? avatar : 'dog.png';
         const avatarUrl = `img/${safeAvatar}`;
 
         const img = document.createElement('img');
