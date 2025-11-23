@@ -175,6 +175,7 @@
       background: #000;
       cursor: grab;
       user-select: none;
+      display: block;
     }
 
     .comparison-image-container:active {
@@ -189,18 +190,24 @@
       pointer-events: none;
     }
 
+    .comparison-image-after {
+      position: relative;
+      width: 100%;
+      display: block;
+      visibility: visible;
+      z-index: 1;
+    }
+
     .comparison-image-before {
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
-      clip-path: inset(0 50% 0 0);
-      transition: clip-path 0.1s ease-out;
-    }
-
-    .comparison-image-after {
-      position: relative;
-      width: 100%;
+      width: 50%;
+      height: 100%;
+      object-fit: cover;
+      object-position: left center;
+      transition: width 0.1s ease-out;
+      z-index: 2;
     }
 
     .comparison-slider {
@@ -470,16 +477,35 @@
     const slider = document.getElementById('comparisonSlider');
     const container = document.querySelector('.comparison-image-container');
     const beforeImage = document.querySelector('.comparison-image-before');
+    const afterImage = document.querySelector('.comparison-image-after');
     let isDragging = false;
 
-    if (!slider || !container || !beforeImage) return;
+    if (!slider || !container || !beforeImage || !afterImage) return;
+    
+    // Устанавливаем высоту контейнера на основе высоты нового фото
+    function setContainerHeight() {
+      if (afterImage.complete) {
+        const height = afterImage.offsetHeight;
+        container.style.height = height + 'px';
+        beforeImage.style.height = height + 'px';
+      } else {
+        afterImage.onload = function() {
+          const height = afterImage.offsetHeight;
+          container.style.height = height + 'px';
+          beforeImage.style.height = height + 'px';
+        };
+      }
+    }
+    
+    setContainerHeight();
+    window.addEventListener('resize', setContainerHeight);
 
     function updateSliderPosition(x) {
       const rect = container.getBoundingClientRect();
       const percentage = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
       
       slider.style.left = percentage + '%';
-      beforeImage.style.clipPath = `inset(0 ${100 - percentage}% 0 0)`;
+      beforeImage.style.width = percentage + '%';
     }
 
     function handleMove(e) {
