@@ -206,7 +206,7 @@
       height: 100%;
       object-fit: cover;
       object-position: left center;
-      transition: width 0.1s ease-out;
+      transition: none;
       z-index: 2;
     }
 
@@ -504,8 +504,21 @@
       const rect = container.getBoundingClientRect();
       const percentage = Math.max(0, Math.min(100, ((x - rect.left) / rect.width) * 100));
       
+      // Убираем transition во время перетаскивания для мгновенной синхронизации
+      if (isDragging) {
+        beforeImage.style.transition = 'none';
+        slider.style.transition = 'none';
+      }
+      
+      // Синхронно обновляем позицию ползунка и ширину старого фото
       slider.style.left = percentage + '%';
       beforeImage.style.width = percentage + '%';
+      
+      // Восстанавливаем transition только если не перетаскиваем
+      if (!isDragging) {
+        beforeImage.style.transition = '';
+        slider.style.transition = '';
+      }
     }
 
     function handleMove(e) {
@@ -519,6 +532,9 @@
     function handleEnd() {
       isDragging = false;
       container.style.cursor = 'grab';
+      // Восстанавливаем плавные переходы после окончания перетаскивания
+      beforeImage.style.transition = '';
+      slider.style.transition = '';
     }
 
     // Обработчики для мыши
