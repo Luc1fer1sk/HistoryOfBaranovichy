@@ -10,12 +10,8 @@
   <style>
     /* Анимация загрузки страницы */
     @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
     @keyframes slideUp {
@@ -52,42 +48,24 @@
     }
 
     @keyframes shimmer {
-      0% {
-        background-position: -1000px 0;
-      }
-      100% {
-        background-position: 1000px 0;
-      }
+      0% { background-position: -1000px 0; }
+      100% { background-position: 1000px 0; }
     }
 
     @keyframes float {
-      0%, 100% {
-        transform: translateY(0px);
-      }
-      50% {
-        transform: translateY(-10px);
-      }
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-10px); }
     }
 
     @keyframes gradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-      50% {
-        background-position: 100% 50%;
-      }
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     @keyframes pulse {
-      0%, 100% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.7;
-      }
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
     }
 
     /* Анимированный фон */
@@ -102,7 +80,7 @@
       flex-direction: column;
       min-height: 100vh;
       opacity: 0;
-      animation: fadeIn 0.8s ease-in-out forwards, gradientShift 15s ease infinite;
+      animation: fadeIn 0.5s ease-in-out forwards, gradientShift 15s ease infinite;
       overflow-x: hidden;
     }
 
@@ -130,7 +108,7 @@
       padding: 2rem 1rem;
       position: relative;
       opacity: 0;
-      animation: slideDown 1s ease-out 0.3s forwards, gradientShift 8s ease infinite;
+      animation: slideDown 0.6s ease-out 0.2s forwards, gradientShift 8s ease infinite;
       box-shadow: 0 4px 20px rgba(11, 61, 145, 0.3);
       z-index: 1;
     }
@@ -155,7 +133,7 @@
       text-align: center;
       line-height: 60px;
       opacity: 0;
-      animation: scaleIn 0.6s ease-out 0.5s forwards;
+      animation: scaleIn 0.4s ease-out 0.2s forwards;
     }
 
     .profile-icon img {
@@ -184,7 +162,7 @@
       border-radius: 8px;
       box-shadow: 0 3px 6px rgba(0,0,0,0.2);
       opacity: 0;
-      animation: scaleIn 0.8s ease-out 0.6s forwards;
+      animation: scaleIn 0.5s ease-out 0.3s forwards;
       transition: transform 0.3s ease;
     }
 
@@ -196,14 +174,14 @@
       margin: 0;
       font-size: 2rem;
       opacity: 0;
-      animation: slideUp 0.8s ease-out 0.8s forwards;
+      animation: slideUp 0.6s ease-out 0.4s forwards;
       text-shadow: 0 2px 10px rgba(0,0,0,0.2);
       position: relative;
     }
 
     header p {
       opacity: 0;
-      animation: slideUp 0.8s ease-out 1s forwards;
+      animation: slideUp 0.6s ease-out 0.5s forwards;
       margin-top: 0.5rem;
     }
 
@@ -213,7 +191,7 @@
 
     .menu-container {
       max-width: 800px;
-      margin: 3rem auto;
+      margin: 2rem auto;
       padding: 0 1.5rem;
       position: relative;
       z-index: 1;
@@ -249,15 +227,15 @@
     }
 
     .menu-item:nth-child(1) {
-      animation: slideUp 0.8s ease-out 1.2s forwards;
+      animation: slideUp 0.6s ease-out 0.6s forwards;
     }
 
     .menu-item:nth-child(2) {
-      animation: slideUp 0.8s ease-out 1.4s forwards;
+      animation: slideUp 0.6s ease-out 0.7s forwards;
     }
 
     .menu-item:nth-child(3) {
-      animation: slideUp 0.8s ease-out 1.6s forwards;
+      animation: slideUp 0.6s ease-out 0.8s forwards;
     }
 
     .menu-item:hover {
@@ -302,7 +280,7 @@
       color: #666;
       border-top: 1px solid #ddd;
       opacity: 0;
-      animation: fadeIn 1s ease-out 1.8s forwards;
+      animation: fadeIn 0.6s ease-out 0.9s forwards;
       position: relative;
       z-index: 1;
     }
@@ -321,10 +299,9 @@
       transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     }
 
-    /* Анимация появления для основного контента */
     main {
       opacity: 0;
-      animation: fadeIn 1s ease-out 1s forwards;
+      animation: fadeIn 0.5s ease-out 0.5s forwards;
     }
 
     @media (max-width: 600px) {
@@ -354,19 +331,6 @@
       }
     }
 
-    /* Дополнительные эффекты для улучшения UX */
-    @keyframes bounce {
-      0%, 20%, 50%, 80%, 100% {
-        transform: translateY(0);
-      }
-      40% {
-        transform: translateY(-10px);
-      }
-      60% {
-        transform: translateY(-5px);
-      }
-    }
-
     /* Плавная прокрутка */
     html {
       scroll-behavior: smooth;
@@ -376,11 +340,9 @@
 <body>
 
 <header>
-  <!-- Иконка профиля (пока без href — зададим через JS) -->
   <a href="#" id="profileLink" class="profile-icon" aria-label="Профиль">👤</a>
-
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Горисполком Барановичей">
- <h1>Мой дом - история</h1>
+  <h1>Мой дом - история</h1>
   <p>Выберите раздел для просмотра</p>
 </header>
 
@@ -389,7 +351,7 @@
     <div class="menu-item">
       <a href="MainList.html">Список исторических достопримечательностей</a>
     </div>
-     <div class="menu-item">
+    <div class="menu-item">
       <a href="scan-qr.html">Просканировать QR - код</a>
     </div>
     <div class="menu-item">
@@ -397,33 +359,27 @@
     </div>
   </div>
 </main>
+
 <footer>
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
 
 <script>
-  // === Настройте здесь ваши данные Supabase ===
-  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co'; // ← ЗАМЕНИТЕ!
-  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';        // ← ЗАМЕНИТЕ!
+  const supabaseUrl = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
 
   const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      flowType: 'pkce'
-    }
+    auth: { flowType: 'pkce' }
   });
 
   const profileLink = document.getElementById('profileLink');
 
-  // Проверяем, авторизован ли пользователь и загружаем аватар
   async function checkAuth() {
     try {
       const { data: { user }, error: authError } = await supabase.auth.getUser();
 
       if (user && !authError) {
-        // Пользователь авторизован → загружаем профиль с аватаром
         profileLink.href = 'profile.html';
-        
-        // Загружаем профиль для получения аватара
         const { data: profile, error: profileError } = await supabase
           .from('profiles')
           .select('avatar')
@@ -431,11 +387,9 @@
           .single();
 
         const avatar = profile?.avatar || 'dog.png';
-        // Безопасное экранирование имени файла
         const safeAvatar = (avatar === 'dog.png' || avatar === 'cat.png') ? avatar : 'dog.png';
         const avatarUrl = `img/${safeAvatar}`;
-        
-        // Показываем аватар пользователя
+
         const img = document.createElement('img');
         img.src = avatarUrl;
         img.alt = 'Аватар';
@@ -456,7 +410,6 @@
         profileLink.innerHTML = '';
         profileLink.appendChild(img);
       } else {
-        // Не авторизован → показываем эмодзи и ведём на регистрацию
         profileLink.href = 'register.html';
         profileLink.innerHTML = '👤';
       }
@@ -467,12 +420,9 @@
     }
   }
 
-  // Запускаем проверку при загрузке
   checkAuth().catch(console.error);
 
-  // Дополнительные анимации и эффекты
   document.addEventListener('DOMContentLoaded', function() {
-    // Добавляем эффект ripple при клике на элементы меню
     const menuItems = document.querySelectorAll('.menu-item');
     menuItems.forEach(item => {
       item.addEventListener('click', function(e) {
@@ -486,7 +436,6 @@
         ripple.style.left = x + 'px';
         ripple.style.top = y + 'px';
         ripple.classList.add('ripple');
-        
         this.appendChild(ripple);
         
         setTimeout(() => {
@@ -495,7 +444,6 @@
       });
     });
 
-    // Плавные переходы при клике на ссылки
     const links = document.querySelectorAll('a[href]');
     links.forEach(link => {
       if (link.hostname === window.location.hostname || !link.hostname) {
@@ -513,7 +461,6 @@
       }
     });
 
-    // Добавляем эффект параллакса для header при прокрутке
     window.addEventListener('scroll', function() {
       const currentScroll = window.pageYOffset;
       const header = document.querySelector('header');
@@ -526,7 +473,6 @@
       }
     });
 
-    // Анимация при наведении на иконку профиля
     const profileIcon = document.getElementById('profileLink');
     if (profileIcon) {
       profileIcon.addEventListener('mouseenter', function() {
@@ -538,7 +484,6 @@
     }
   });
 
-  // Добавляем стили для ripple эффекта
   const style = document.createElement('style');
   style.textContent = `
     .ripple {
@@ -562,5 +507,3 @@
 
 </body>
 </html>
-
-
