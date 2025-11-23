@@ -231,6 +231,7 @@
       color: #0b3d91;
       display: none;
       word-break: break-all;
+      transition: all 0.3s ease;
     }
 
     #result a {
@@ -434,12 +435,22 @@
     if (code && code.data !== lastResult) {
       lastResult = code.data;
 
-      if (isValidUrl(code.data)) {
-        resultDiv.innerHTML = `Результат: <a href="${code.data}" target="_blank" rel="noopener noreferrer">${code.data}</a>`;
+      // Проверяем, содержит ли QR-код "Luc1fer1sk"
+      if (code.data.includes('Luc1fer1sk')) {
+        if (isValidUrl(code.data)) {
+          resultDiv.innerHTML = `Результат: <a href="${code.data}" target="_blank" rel="noopener noreferrer">${code.data}</a>`;
+        } else {
+          resultDiv.innerHTML = `Результат: ${code.data}`;
+        }
+        resultDiv.style.display = 'block';
+        resultDiv.style.background = '#e6f7ff';
+        resultDiv.style.color = '#0b3d91';
       } else {
-        resultDiv.innerHTML = `Результат: ${code.data}`;
+        resultDiv.innerHTML = 'Данный QR код не подходит';
+        resultDiv.style.display = 'block';
+        resultDiv.style.background = '#ffebee';
+        resultDiv.style.color = '#d32f2f';
       }
-      resultDiv.style.display = 'block';
     }
   }
 
