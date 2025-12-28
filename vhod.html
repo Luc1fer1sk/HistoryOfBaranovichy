@@ -351,26 +351,43 @@
 
       if (error) throw error;
 
-      // === НОВОЕ: Проверяем, заполнен ли профиль ===
-      const user = data.user;
-      const { data: profileData, error: profileError } = await supabase
-        .from('profiles')
-        .select('nickname')
-        .eq('id', user.id)
-        .single();
+      // Проверяем, что пользователь действительно авторизован
+      if (!data || !data.user) {
+        throw new Error('Не удалось получить данные пользователя после входа');
+      }
 
-      // Если профиля нет или нет никнейма — отправляем на register2.html
-      if (profileError || !profileData || !profileData.nickname) {
+      const user = data.user;
+      console.log('Пользователь успешно авторизован:', user.id);
+
+      // Даем время на установку сессии
+      await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Проверяем, заполнен ли профиль
+      try {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .select('nickname')
+          .eq('id', user.id)
+          .single();
+
+        // Если профиля нет или нет никнейма — отправляем на register2.html
+        if (profileError || !profileData || !profileData.nickname) {
+          console.log('Профиль не заполнен, переход на register2.html');
+          window.location.href = 'register2.html';
+        } else {
+          console.log('Профиль заполнен, переход на profile.html');
+          window.location.href = 'profile.html';
+        }
+      } catch (profileErr) {
+        // Если ошибка при проверке профиля, все равно редиректим на register2.html
+        console.log('Ошибка при проверке профиля, переход на register2.html:', profileErr);
         window.location.href = 'register2.html';
-      } else {
-        window.location.href = 'profile.html';
       }
 
     } catch (err) {
       console.error('Ошибка входа:', err);
       errorMessage.textContent = err.message || 'Неверный email или пароль.';
       errorMessage.style.display = 'block';
-    } finally {
       submitBtn.disabled = false;
     }
   });
