@@ -647,12 +647,18 @@ if (email === 'deniskalol227228@yandex.ru') {
 
   async function loadProfile() {
     try {
+      // Даем время на установку сессии после входа
+      await new Promise(resolve => setTimeout(resolve, 300));
+
       const { data: { user }, error: authError } = await supabase.auth.getUser();
 
       if (authError || !user) {
+        console.error('Ошибка авторизации:', authError);
         window.location.href = 'vhod.html';
         return;
       }
+
+      console.log('Загрузка профиля для пользователя:', user.id);
 
       const { data: profile, error: dbError } = await supabase
         .from('profiles')
@@ -660,6 +666,13 @@ if (email === 'deniskalol227228@yandex.ru') {
         .eq('id', user.id)
         .single();
 
+      // Если профиль не найден (код PGRST116), это нормально - показываем с пустыми данными
+      if (dbError && dbError.code !== 'PGRST116') {
+        console.error('Ошибка загрузки профиля из БД:', dbError);
+        throw dbError;
+      }
+
+      console.log('Профиль загружен:', profile || 'пустой профиль');
       // Если профиль не найден, показываем с пустыми данными
       renderProfile(user, profile || null);
     } catch (err) {
@@ -667,17 +680,34 @@ if (email === 'deniskalol227228@yandex.ru') {
       document.getElementById('profileContent').innerHTML = 
         `<div class="empty-state">
           <p>Не удалось загрузить профиль. Попробуйте обновить страницу.</p>
+          <p style="color: #999; font-size: 0.9rem; margin-top: 0.5rem;">Ошибка: ${err.message || 'Неизвестная ошибка'}</p>
           <a href="index.html" class="back-link" style="margin-top: 1rem;">← Вернуться на главную</a>
         </div>`;
     }
   }
 
-  // Запуск
-  loadProfile().catch(err => {
-    console.error('Ошибка загрузки профиля:', err);
-    document.getElementById('profileContent').innerHTML = 
-      `<p style="color:#d32f2f;text-align:center;">Не удалось загрузить профиль.</p>`;
-  });
+  // Запуск после загрузки DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      loadProfile().catch(err => {
+        console.error('Ошибка загрузки профиля:', err);
+        const contentEl = document.getElementById('profileContent');
+        if (contentEl) {
+          contentEl.innerHTML = 
+            `<p style="color:#d32f2f;text-align:center;">Не удалось загрузить профиль.</p>`;
+        }
+      });
+    });
+  } else {
+    loadProfile().catch(err => {
+      console.error('Ошибка загрузки профиля:', err);
+      const contentEl = document.getElementById('profileContent');
+      if (contentEl) {
+        contentEl.innerHTML = 
+          `<p style="color:#d32f2f;text-align:center;">Не удалось загрузить профиль.</p>`;
+      }
+    });
+  }
 
   // Плавные переходы при клике на ссылки
   document.querySelectorAll('a[href]').forEach(link => {
