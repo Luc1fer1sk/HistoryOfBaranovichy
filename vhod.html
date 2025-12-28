@@ -366,25 +366,29 @@
       await new Promise(resolve => setTimeout(resolve, 500));
 
       // Проверяем, заполнен ли профиль
-      try {
-        const { data: profileData, error: profileError } = await supabase
-          .from('profiles')
-          .select('nickname')
-          .eq('id', user.id)
-          .single();
+      const { data: profileData, error: profileError } = await supabase
+        .from('profiles')
+        .select('nickname')
+        .eq('id', user.id)
+        .maybeSingle();
 
-        // Если профиля нет или нет никнейма — отправляем на register2.html
-        if (profileError || !profileData || !profileData.nickname) {
-          console.log('Профиль не заполнен, переход на register2.html');
-          window.location.href = 'register2.html';
-        } else {
-          console.log('Профиль заполнен, переход на profile.html');
-          window.location.href = 'profile.html';
+      // Если профиля нет (код PGRST116) или нет никнейма — отправляем на register2.html
+      if (profileError) {
+        // Если ошибка не "не найдено", логируем ее
+        if (profileError.code !== 'PGRST116') {
+          console.error('Ошибка при проверке профиля:', profileError);
         }
-      } catch (profileErr) {
-        // Если ошибка при проверке профиля, все равно редиректим на register2.html
-        console.log('Ошибка при проверке профиля, переход на register2.html:', profileErr);
+        console.log('Профиль не найден, переход на register2.html');
         window.location.href = 'register2.html';
+        return;
+      }
+
+      if (!profileData || !profileData.nickname) {
+        console.log('Профиль не заполнен (нет никнейма), переход на register2.html');
+        window.location.href = 'register2.html';
+      } else {
+        console.log('Профиль заполнен, переход на profile.html');
+        window.location.href = 'profile.html';
       }
 
     } catch (err) {
