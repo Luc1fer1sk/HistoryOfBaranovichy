@@ -161,10 +161,19 @@
     }
 
     .attraction {
-  opacity: 0;
-  transform: translateY(30px);
-  animation: slideUp 0.6s ease-out forwards;
-}
+      animation: slideUp 0.6s ease-out forwards;
+    }
+
+    .attraction:nth-child(1) { animation-delay: 0.6s; }
+    .attraction:nth-child(2) { animation-delay: 0.7s; }
+    .attraction:nth-child(3) { animation-delay: 0.8s; }
+    .attraction:nth-child(4) { animation-delay: 0.9s; }
+    .attraction:nth-child(5) { animation-delay: 1.0s; }
+    .attraction:nth-child(6) { animation-delay: 1.1s; }
+    .attraction:nth-child(7) { animation-delay: 1.2s; }
+    .attraction:nth-child(8) { animation-delay: 1.3s; }
+    .attraction:nth-child(9) { animation-delay: 1.4s; }
+    .attraction:nth-child(10) { animation-delay: 1.5s; }
 
     .attraction:hover {
       transform: translateY(-8px) scale(1.02);
@@ -292,6 +301,12 @@
         margin-top: 1rem;
       }
     }
+
+    #loading {
+      text-align: center;
+      padding: 2rem;
+      color: #0b3d91;
+    }
   </style>
 </head>
 <body>
@@ -300,75 +315,84 @@
   <img src="img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Герб Барановичей">
   <h1>Достопримечательности Барановичей</h1>
   <p>История и архитектура нашего города</p>
-  </div>
   <a href="index.html" class="back-button">Главная</a>
 </header>
 
-<div class="list-container">
-
-  <!-- Достопримечательность 1 -->
-  <div class="attraction" data-lat="53.1300" data-lon="26.0130">
-    <img src="img/1960-ispolkom-1871by.jpg" alt="Здание горисполкома">
-    <div class="attraction-info">
-      <h2>Городской исполнительный комитет</h2>
-      <p><strong>Адрес:</strong> пл. Ленина, д. 2, г. Барановичи</p>
-      <p>Административное здание в центре города, символ городской власти с советских времён.</p>
-      <a href="GIK.html" class="attraction-link">Подробнее →</a>
-    </div>
-  </div>
-
-  <div class="attraction" data-lat="53.1280" data-lon="26.0150">
-    <img src="img/BCV1.png" alt="Здание Полесского барановичского вокзала">
-    <div class="attraction-info">
-      <h2>Полесский барановичский вокзал</h2>
-      <p><strong>Адрес:</strong> пр. Железнодорожный, д. 1, г. Барановичи</p>
-      <p>Сердце транспортной системы города с 1884 года.</p>
-      <a href="BCV.html" class="attraction-link">Подробнее →</a>
-    </div>
-  </div>
-
-   <div class="attraction" data-lat="53.1310" data-lon="26.0120">
-    <img src="img/BTK1.jpeg" alt="Здание Барановичского технологического колледжа">
-    <div class="attraction-info">
-      <h2>Барановичский технологический колледж</h2>
-      <p><strong>Адрес:</strong> пл. Ленина, д. 5, г. Барановичи</p>
-      <p>Образование, традиции и будущее кооперативной отрасли.</p>
-      <a href="BTK.html" class="attraction-link">Подробнее →</a>
-    </div>
-  </div>
-
-
+<div class="list-container" id="attractions-list">
+  <div id="loading">Загрузка...</div>
+</div>
 
 <footer>
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
 
 <script>
-  // Плавные переходы при клике на ссылки
-  document.querySelectorAll('a[href]').forEach(link => {
-    if (link.hostname === window.location.hostname || !link.hostname) {
-      link.addEventListener('click', function(e) {
-        const href = this.getAttribute('href');
-        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
-          e.preventDefault();
-          document.body.style.opacity = '0';
-          document.body.style.transition = 'opacity 0.3s ease';
-          setTimeout(() => {
-            window.location.href = href;
-          }, 300);
+  const SUPABASE_URL = 'https://osowjsvflnzgartkcmis.supabase.co';
+  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c';
+
+  async function loadAttractions() {
+    try {
+      const response = await fetch(`${SUPABASE_URL}/rest/v1/attractions?select=*`, {
+        headers: {
+          'apikey': ANON_KEY,
+          'Content-Type': 'application/json'
         }
       });
+
+      if (!response.ok) throw new Error('Ошибка загрузки данных');
+
+      const attractions = await response.json();
+      const container = document.getElementById('attractions-list');
+      
+      if (attractions.length === 0) {
+        container.innerHTML = '<p>Нет достопримечательностей</p>';
+        return;
+      }
+
+      let html = '';
+      attractions.forEach(attr => {
+        const firstPhoto = attr.photos && attr.photos.length > 0 
+          ? `${SUPABASE_URL}/storage/v1/object/public/Images/${attr.photos[0]}`
+          : 'img/placeholder.jpg';
+        
+        html += `
+  <div class="attraction">
+    <img src="${firstPhoto}" alt="${attr.title}">
+    <div class="attraction-info">
+      <h2>${attr.title}</h2>
+      <p><strong>Адрес:</strong> ${attr.address || ''}</p>
+      <p>${attr.subtitle || ''}</p>
+      <a href="View.html?id=${attr.id}" class="attraction-link">Подробнее →</a>
+    </div>
+  </div>`;
+      });
+
+      container.innerHTML = html;
+
+      // Плавные переходы
+      document.querySelectorAll('a[href]').forEach(link => {
+        if (link.hostname === window.location.hostname || !link.hostname) {
+          link.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+              e.preventDefault();
+              document.body.style.opacity = '0';
+              document.body.style.transition = 'opacity 0.3s ease';
+              setTimeout(() => {
+                window.location.href = href;
+              }, 300);
+            }
+          });
+        }
+      });
+    } catch (error) {
+      console.error('Ошибка:', error);
+      document.getElementById('attractions-list').innerHTML = 
+        '<p style="color:red;">Ошибка загрузки данных</p>';
     }
-  });
+  }
+
+  loadAttractions();
 </script>
 </body>
-
 </html>
-
-
-
-
-
-
-
-
