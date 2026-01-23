@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>{{title}}</title>
+  <link rel="icon" type="image/x-icon" href="/img/belarusflag_6588.ico">
+  <style>
+    /* Вставь сюда весь твой CSS из примера */
+    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; margin: 0; padding: 0; background: #f5f7fa; color: #333; }
+    .container { max-width: 900px; margin: 2rem auto; padding: 0 1.5rem; }
+    h1, h2 { color: #0b3d91; }
+    /* ... остальной CSS ... */
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="/img/Baranovichi_Coat_of_Arms_of_Baranavičy.svg.png" alt="Герб Барановичей">
+  <div class="text">
+    <h1>{{title}}</h1>
+    <p>{{subtitle}}</p>
+  </div>
+  <a href="/" class="back-button">Главная</a>
+</header>
+
+<div class="container">
+  <h2>История</h2>
+  <p>{{history}}</p>
+
+  <h2>Современность</h2>
+  <p><strong>Адрес:</strong> {{address}}</p>
+  <p>{{modern}}</p>
+
+  <h2>Фотографии</h2>
+  <div class="gallery">
+{{photoTags}}
+  </div>
+
+  {{#callToAction}}
+  <p style="margin-top: 2rem; font-style: italic; color: #555;">
+    <em>{{callToAction}}</em>
+  </p>
+  {{/callToAction}}
+</div>
+
+<footer>
+  <p>© "Мой дом - история", 2025. Все права защищены.</p>
+</footer>
+
+</body>
+</html>
