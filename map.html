@@ -5,64 +5,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Мой дом - история (Карта)</title>
   <link rel="icon" type="image/x-icon" href="img/belarusflag_6588.ico">
-
-  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
   <style>
-    /* Анимации */
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
-    @keyframes slideUp {
-      from {
-        opacity: 0;
-        transform: translateY(30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    @keyframes scaleIn {
-      from {
-        opacity: 0;
-        transform: scale(0.9);
-      }
-      to {
-        opacity: 1;
-        transform: scale(1);
-      }
-    }
-
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.7; }
-    }
+    /* ... (весь твой CSS из оригинального файла) ... */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-30px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes scaleIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes gradientShift { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -202,7 +153,6 @@
       transform: scale(1.05);
     }
 
-    /* Стили popup'а — без изменений */
     .leaflet-popup-content-wrapper {
       border-radius: 10px;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -256,38 +206,31 @@
       header {
         padding: 0.8rem 1rem 0.4rem;
       }
-
       header img {
         height: 50px;
       }
-
       h1 {
         font-size: 1.4rem;
       }
-
       .back-button {
         padding: 0.4rem 0.8rem;
         margin-top: 0.5rem;
       }
-
       #map {
-        min-height: 90vh; /* на мобильных — почти весь экран, но с возможностью скролла */
+        min-height: 90vh;
         max-width: 100%;
         border-radius: 8px;
       }
-
       .leaflet-popup-content {
         width: 260px;
         flex-direction: column;
         text-align: center;
       }
-
       .popup-image {
         width: 100px;
         height: 100px;
         margin: 0 auto;
       }
-
       .popup-info {
         padding: 0.6rem;
       }
@@ -314,7 +257,6 @@
   <p>© "Мой дом - история", 2025. Все права защищены.</p>
 </footer>
 
-<!-- Leaflet JS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
@@ -324,86 +266,73 @@
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  const places = [
-    [
-      "Барановичский технологический колледж",
-      53.1328,
-      26.0217,
-      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BTK.html",
-      "img/BTK1.jpeg",
-      "пл. Ленина, д. 5, г. Барановичи",
-      "Образование, традиции и будущее кооперативной отрасли."
-    ],
-    [
-      "Городской исполнительный комитет",
-      53.1317,
-      26.0182,
-      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/GIK.html",
-      "img/1960-ispolkom-1871by.jpg",
-      "пл. Ленина, д. 2, г. Барановичи",
-      "Административное здание в центре города, символ городской власти с советских времён."
-    ],
-    [
-      "Барановичский полесский вокзал",
-      53.1293,
-      26.0426,
-      "https://luc1fer1sk.github.io/HistoryOfBaranovichy/BCV.html",
-      "img/BCV1.png",
-      "пр. Железнодорожный, д. 1, г. Барановичи",
-      "Сердце транспортной системы города с 1884 года."
-    ]
-  ];
+  async function loadMarkers() {
+    try {
+      const response = await fetch('https://osowjsvflnzgartkcmis.supabase.co/rest/v1/attractions?select=title,lat,lon,slug,address,subtitle&lat=not.is.null&lon=not.is.null', {
+        headers: {
+          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c'
+        }
+      });
 
-  places.forEach(place => {
-    const [name, lat, lng, url, imgSrc, address, desc] = place;
-    const marker = L.marker([lat, lng]).addTo(map);
+      if (!response.ok) throw new Error('Ошибка загрузки');
 
-    const popupContent = `
-      <div class="leaflet-popup-content">
-        <img class="popup-image" src="${imgSrc}" onerror="this.style.display='none'" alt="${name}">
-        <div class="popup-info">
-          <h3>${name}</h3>
-          <p><strong>Адрес:</strong> ${address}</p>
-          <p>${desc}</p>
-        </div>
-      </div>
-    `;
+      const attractions = await response.json();
 
-    const popup = L.popup({
-      closeButton: false,
-      autoClose: false,
-      closeOnClick: false
-    }).setContent(popupContent);
+      attractions.forEach(attr => {
+        const marker = L.marker([attr.lat, attr.lon]).addTo(map);
 
-    marker.on('mouseover', function() {
-      this.bindPopup(popup).openPopup();
-    });
+        const popupContent = `
+          <div class="leaflet-popup-content">
+            <img class="popup-image" src="img/placeholder.jpg" onerror="this.style.display='none'" alt="${attr.title}">
+            <div class="popup-info">
+              <h3>${attr.title}</h3>
+              <p><strong>Адрес:</strong> ${attr.address || ''}</p>
+              <p>${attr.subtitle || ''}</p>
+            </div>
+          </div>
+        `;
 
-    marker.on('mouseout', function() {
-      this.closePopup();
-    });
+        const popup = L.popup({
+          closeButton: false,
+          autoClose: false,
+          closeOnClick: false
+        }).setContent(popupContent);
 
-    marker.on('click', () => {
-      window.open(url, '_blank');
-    });
-    });
-
-    // Плавные переходы при клике на ссылки
-    document.querySelectorAll('a[href]').forEach(link => {
-      if (link.hostname === window.location.hostname || !link.hostname) {
-        link.addEventListener('click', function(e) {
-          const href = this.getAttribute('href');
-          if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
-            e.preventDefault();
-            document.body.style.opacity = '0';
-            document.body.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => {
-              window.location.href = href;
-            }, 300);
-          }
+        marker.on('mouseover', function() {
+          this.bindPopup(popup).openPopup();
         });
-      }
-    });
+
+        marker.on('mouseout', function() {
+          this.closePopup();
+        });
+
+        marker.on('click', () => {
+          window.location.href = `view/${attr.slug}.html`;
+        });
+      });
+    } catch (error) {
+      console.error('Ошибка:', error);
+    }
+  }
+
+  loadMarkers();
+
+  // Плавные переходы
+  document.querySelectorAll('a[href]').forEach(link => {
+    if (link.hostname === window.location.hostname || !link.hostname) {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href && !href.startsWith('#') && !href.startsWith('javascript:')) {
+          e.preventDefault();
+          document.body.style.opacity = '0';
+          document.body.style.transition = 'opacity 0.3s ease';
+          setTimeout(() => {
+            window.location.href = href;
+          }, 300);
+        }
+      });
+    }
+  });
 </script>
 
 </body>
