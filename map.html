@@ -266,54 +266,59 @@
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright  ">OpenStreetMap</a> contributors'
   }).addTo(map);
 
-  async function loadMarkers() {
-    try {
-      const response = await fetch('https://osowjsvflnzgartkcmis.supabase.co/rest/v1/attractions?select=title  ,lat,lon,slug,address,subtitle&lat=not.is.null&lon=not.is.null', {
-        headers: {
-          'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c'
-        }
-      });
+async function loadMarkers() {
+  try {
+    const response = await fetch('https://osowjsvflnzgartkcmis.supabase.co/rest/v1/attractions?select=title,lat,lon,slug,address,subtitle,photos&lat=not.is.null&lon=not.is.null', {
+      headers: {
+        'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9zb3dqc3ZmbG56Z2FydGtjbWlzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjM3MzIzNDYsImV4cCI6MjA3OTMwODM0Nn0.KcD1CagSRonPXTCjQamrGGYF0ve7eMBBI7MDBgH5y7c'
+      }
+    });
 
-      if (!response.ok) throw new Error('Ошибка загрузки');
+    if (!response.ok) throw new Error('Ошибка загрузки: ' + response.status);
 
-      const attractions = await response.json();
+    const attractions = await response.json();
 
-      attractions.forEach(attr => {
-        const marker = L.marker([attr.lat, attr.lon]).addTo(map);
+    attractions.forEach(attr => {
+      const marker = L.marker([attr.lat, attr.lon]).addTo(map);
 
-        const popupContent = `
-          <div class="leaflet-popup-content">
-            <img class="popup-image" src="img/placeholder.jpg" onerror="this.style.display='none'" alt="${attr.title}">
-            <div class="popup-info">
-              <h3>${attr.title}</h3>
-              <p><strong>Адрес:</strong> ${attr.address || ''}</p>
-              <p>${attr.subtitle || ''}</p>
-            </div>
+      // 🔥 Получаем первое фото
+      const firstPhoto = attr.photos && attr.photos.length > 0 
+        ? `https://osowjsvflnzgartkcmis.supabase.co/storage/v1/object/Images/${attr.photos[0]}`
+        : 'img/placeholder.jpg';
+
+      const popupContent = `
+        <div class="leaflet-popup-content">
+          <img class="popup-image" src="${firstPhoto}" onerror="this.style.display='none'" alt="${attr.title}">
+          <div class="popup-info">
+            <h3>${attr.title}</h3>
+            <p><strong>Адрес:</strong> ${attr.address || ''}</p>
+            <p>${attr.subtitle || ''}</p>
           </div>
-        `;
+        </div>
+      `;
 
-        const popup = L.popup({
-          closeButton: false,
-          autoClose: false,
-          closeOnClick: false
-        }).setContent(popupContent);
+      const popup = L.popup({
+        closeButton: false,
+        autoClose: false,
+        closeOnClick: false
+      }).setContent(popupContent);
 
-        marker.on('mouseover', function() {
-          this.bindPopup(popup).openPopup();
-        });
-
-        marker.on('mouseout', function() {
-          this.closePopup();
-        });
-
-        marker.on('click', () => {
-          window.location.href = `view/${attr.slug}.html`;
-        });
+      marker.on('mouseover', function() {
+        this.bindPopup(popup).openPopup();
       });
-    } catch (error) {
-      console.error('Ошибка:', error);
-    }
+
+      marker.on('mouseout', function() {
+        this.closePopup();
+      });
+
+      marker.on('click', () => {
+        window.location.href = `view/${attr.slug}.html`;
+      });
+    });
+  } catch (error) {
+    console.error('Ошибка загрузки маркеров:', error);
   }
+}
 
   loadMarkers();
 
